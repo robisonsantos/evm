@@ -42,14 +42,14 @@ If that executes fine, then you'll should have a list of actions you can execute
 
     **Obs:**: EVM *will not* downalod the erlang dependencies for you.
 
-- *installed* (`$evm installed`)
-- *download* (`$evm download`)
-- *remove* (`$evm remove`)
-- *uninstall* (`$evm uninstall`)
-- *cache* (`$evm cache`)
-- *system* (`$evm system`)
-- *use* (`$evm use`)
-- *help* (`$evm help`)
+- *installed* (`$ evm installed`)
+- *download* (`$ evm download`)
+- *remove* (`$ evm remove`)
+- *uninstall* (`$ evm uninstall`)
+- *cache* (`$ evm cache`)
+- *system* (`$ evm system`)
+- *use* (`$ evm use`)
+- *help* (`$ evm help`)
 
 ## Dependencies
 

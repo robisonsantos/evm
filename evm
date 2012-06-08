@@ -144,14 +144,13 @@ function evm_install() {
     then
       echo "Canceling installation of $1"
       cd ..
-      rm -rf $FILE_PREFIX$1
+      rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$1
       return 0
     fi
     
     echo "Compiling and installing $1"
-    make && make install 1> "/tmp/erlang_$1_installation" 2>&1
-
-    rm -rf $FILE_PREFIX$1
+    make && makeinstall 1> "/tmp/erlang_$1_installation" 2>&1
+    rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$1
     cd -
     echo "Done!"
     echo "Use 'evm default $1' to set this version as default or 'evm use $1' to start using this version right now"
@@ -170,10 +169,10 @@ function evm_remove() {
     echo "$1 not installed"
   fi
 
-  if [[ -d $DEFAULT_TAR_LOCATION$FILE_PREFIX$1$FILE_SUFIX ]]
+  if [[ -d $DEFAULT_TAR_LOCATION$FILE_PREFIX$1$FILE_EXTENSION ]]
   then
     echo "Removing $1..."
-    rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$1$FILE_SUFIX
+    rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$1$FILE_EXTENSION
     echo "Removed"
   else
     echo "$1 not downloaded"
@@ -248,7 +247,7 @@ function evm_cache() {
   for f in $(ls $DEFAULT_TAR_LOCATION)
   do
        ff=${f#$FILE_PREFIX}
-       echo ${ff%$FILE_SUFIX}
+       echo ${ff%$FILE_EXTENSION}
   done
   echo
 }
