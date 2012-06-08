@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# This simple script shold create the basic environment for 
+# EVM in the user's HOME
+
+EVM_HOME="$HOME/.evm"
+DIRS="erlang_tars erlang_versions evm_config scripts"
+
+# For each dir, check whether it's already exists or not
+for dir in $DIRS
+do
+  if [[ ! -d "$EVM_HOME/$dir" ]]
+  then
+    mkdir -p "$EVM_HOME/$dir"
+    echo "$EVM_HOME/$dir successfull created"
+  else
+    echo "$EVM_HOME/$dir already exists and will not be replaced"
+  fi
+done
+
+# Create the config file
+if [[ ! -f "$EVM_HOME/evm_config/erlang_default" ]]
+then 
+  touch "$EVM_HOME/evm_config/erlang_default"
+  echo "$EVM_HOME/evm_config/erlang_default succesfull created"
+else
+  echo "$EVM_HOME/evm_config/erlang_default already exists and will not be replaced"
+fi
+
+# Copy the script
+cp "evm" "$EVM_HOME/evm_config/scripts"
+
+echo
+echo "
+           _______________   ____ _____                    
+           \_   _____/\   \ /   //     \                   
+   ______   |    __)_  \   Y   //  \ /  \    ______        
+  /_____/   |        \  \     //    Y    \  /_____/        
+           /_______  /   \___/ \____|__  /                 
+                   \/                  \/                  
+ ___________        .__                                    
+ \_   _____/_______ |  |  _____     ____    ____           
+  |    __)_ \_  __ \|  |  \__  \   /    \  / ___\          
+  |        \ |  | \/|  |__ / __ \_|   |  \/ /_/  >         
+ /_______  / |__|   |____/(____  /|___|  /\___  /          
+         \/                    \/      \//_____/           
+ ____   ____                     .__                       
+ \   \ /   / ____ _______  ______|__|  ____    ____        
+  \   Y   /_/ __ \\\\_  __ \/  ___/|  | /  _ \  /    \\       
+   \     / \  ___/ |  | \/\___ \ |  |(  <_> )|   |  \      
+    \___/   \___  >|__|  /____  >|__| \____/ |___|  /      
+                \/            \/                  \/       
+    _____                                                  
+   /     \  _____     ____  _____     ____    ____ _______ 
+  /  \ /  \ \__  \   /    \ \__  \   / ___\ _/ __ \\\\_  __ \\
+ /    Y    \ / __ \_|   |  \ / __ \_/ /_/  >\  ___/ |  | \/
+ \____|__  /(____  /|___|  /(____  /\___  /  \___  >|__|   
+         \/      \/      \/      \//_____/       \/       
+"
+echo 
+echo "Execute 'source $HOME/.evm/scripts/evm' or add that to your ~/.bashrc file"

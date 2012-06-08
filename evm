@@ -1,0 +1,314 @@
+#!/bin/bash
+# evm2_0.sh
+#
+# Read the page http://www.erlang.org/download.html and catch
+# all available erlang versions to download
+#
+# Dependencies: lynx
+
+ERLANG_ORG="http://www.erlang.org/download.html"
+ERLANG_URL="http://www.erlang.org"
+FILE_PATH="/download/otp_src_"
+FILE_EXTENSION=".tar.gz"
+FILE_PREFIX="otp_src_"
+DEFAULT_TAR_LOCATION=$HOME"/.evm/erlang_tars/"
+DEFAULT_INSTALL_LOCATION=$HOME"/.evm/erlang_versions/"
+
+# TODO: add here some way to discover what's the 
+#       default version and what's been set to be used and the ones already downloaded
+# For now just load the default version
+if [[ -f "$HOME/.evm/evm_config/erlang_default" ]]
+then
+  default=$(cat "$HOME/.evm/evm_config/erlang_default")
+  export PATH="$PATH:$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$default/bin"
+fi
+
+# This function is responsible for listing all 
+# available erlang versions from erlang.org page
+# @params: none
+function evm_list() {
+  # get the download.html page in a txt format
+  # filter for all lines in the format '* Rnn' and 
+  # remove all spaces in the beginner of the line
+  if [[ ! -z "$http_proxy" ]] ## http_proxy is set
+  then
+    local USER=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)
+    local PASS=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)
+    local AUTH="-pauth=$USER:$PASS"
+  fi
+
+  local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | fgrep "* R" | sed 's/.*\* //')
+  echo Available Erlang versions on $ERLANG_URL
+  echo
+
+  for erlang in $(echo "$ERLANGS" | sort | tac); do
+    echo "$erlang" | cut -d ' ' -f 1
+  done
+  echo
+}
+
+
+# This function will receive the version name to be 
+# downloaded. If the version exists in the erlang.org
+# it will be stored at $HOME/.evm/erlang_tars. If not, a message is printed
+# to user
+# @params: erlang_version
+function evm_download() {
+  if [[ ! -z "$http_proxy" ]] ## http_proxy is set
+  then
+    local USER=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)
+    local PASS=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)
+    local AUTH="-pauth=$USER:$PASS"
+  fi
+
+  local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | fgrep "* R" | sed 's/.*\* //')
+  
+  if [[ -z $(echo "$ERLANGS" | grep "$1") ]]
+  then
+    echo "$1 - This version is not available at $ERLANG_ORG"
+  else
+    if [[ -f "$DEFAULT_TAR_LOCATION/$FILE_PREFIX$1$FILE_EXTENSION" ]]
+    then
+      echo "$1 - is already present at $DEFAULT_TAR_LOCATION"
+    else
+      mkdir -p $DEFAULT_TAR_LOCATION
+      wget -P $DEFAULT_TAR_LOCATION $ERLANG_URL$FILE_PATH$1$FILE_EXTENSION
+    fi
+  fi
+  echo
+}
+
+
+# This function will remove alter the PATH variable, leaving only
+# the system version of ERLANG available.
+# @params: none
+function evm_system() {
+  local evm_path=$HOME/.evm
+  
+  PATH="$(printf "$PATH" \
+  | awk -v RS=: -v ORS=: "/${evm_path//\//\/}/ {next} {print}" \
+  | sed -e 's#:$##')"
+
+  export PATH
+}
+
+# This function will download the erlang version if needed,
+# then is will "install" that version in the evm space.
+# @params: erlang_version
+# TODO: only tries to download if the file is not cached yet
+function evm_install() {
+  # Download version only if it does not existed cached 
+  if [[ -f "$DEFAULT_TAR_LOCATION/$FILE_PREFIX$1$FILE_EXTENSION" ]]
+  then
+    echo "$1 is already cached, don't need to download it"
+  else
+    if [[ ! -z "$http_proxy" ]] ## http_proxy is set
+    then
+      local USER=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)
+      local PASS=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)
+      local AUTH="-pauth=$USER:$PASS"
+    fi
+
+    local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | fgrep "* R" | sed 's/.*\* //')
+
+    if [[ -z $(echo "$ERLANGS" | grep "$1") ]]
+    then
+      echo "$1 - This version is not available at $ERLANG_ORG"
+      return 1 
+    else
+      mkdir -p $DEFAULT_TAR_LOCATION
+      wget -P $DEFAULT_TAR_LOCATION $ERLANG_URL$FILE_PATH$1$FILE_EXTENSION     
+    fi
+  fi
+
+  # Install the version if not installed yet
+  if [[ -d "$DEFAULT_INSTALL_LOCATION/$FILE_PREFIX$1" ]]
+  then
+    echo "$1 - This version is already installed at $DEFAULT_INSTALL_LOCATION"
+    echo "Try evm 'remove $1' and then 'evm install $1' again"
+  else
+    mkdir -p $DEFAULT_INSTALL_LOCATION
+    echo "Inflating $DEFAULT_TAR_LOCATION/$FILE_PREFIX$1$FILE_EXTENSION"
+    tar -xzf $DEFAULT_TAR_LOCATION/$FILE_PREFIX$1$FILE_EXTENSION -C $DEFAULT_TAR_LOCATION
+    
+    echo "Configuring..."
+    cd $DEFAULT_TAR_LOCATION/$FILE_PREFIX$1
+    ./configure --prefix $DEFAULT_INSTALL_LOCATION/$FILE_PREFIX$1
+
+    echo 
+    echo "Continue with installation?(y/n)"
+
+    read cont
+
+    if [[ $cont != "Y" && $cont != "y" ]]
+    then
+      echo "Canceling installation of $1"
+      cd ..
+      rm -rf $FILE_PREFIX$1
+      return 0
+    fi
+    
+    echo "Compiling and installing $1"
+    make && make install 1> "/tmp/erlang_$1_installation" 2>&1
+
+    rm -rf $FILE_PREFIX$1
+    cd -
+    echo "Done!"
+    echo "Use 'evm default $1' to set this version as default or 'evm use $1' to start using this version right now"
+  fi
+}
+
+# This function will remove the erlang version from the evm space
+# @params: erlang_version
+function evm_remove() {
+  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1 ]]
+  then
+    echo "Uninstalling $1..."
+    rm -rf $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1
+    echo "Uninstalled"
+  else
+    echo "$1 not installed"
+  fi
+
+  if [[ -d $DEFAULT_TAR_LOCATION$FILE_PREFIX$1$FILE_SUFIX ]]
+  then
+    echo "Removing $1..."
+    rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$1$FILE_SUFIX
+    echo "Removed"
+  else
+    echo "$1 not downloaded"
+  fi
+}
+
+# This function will actually uninstall the erlang version from 
+# system, but will leave the erlang tar in the evm space
+# @params: erlang_version
+function evm_uninstall() {
+  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1 ]]
+  then
+    echo "Uninstalling $1..."
+    rm -rf $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1
+    echo "Uninstalled"
+  else
+    echo "$1 not installed"
+  fi
+}
+
+# This function will set this erlang version to be the one 
+# available in the PATH
+# @params: erlang_version
+function evm_use() {
+  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1 ]]
+  then
+    local evm_path=$HOME/.evm
+    PATH="$(printf "$PATH" \
+         | awk -v RS=: -v ORS=: "/${evm_path//\//\/}/ {next} {print}" \
+         | sed -e 's#:$##')"
+
+    export PATH=$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1/bin:$PATH
+  else
+    echo "$1 - Version not installed. Use 'evm install $1' to install it"
+  fi
+}
+
+# This function will set this erlang version as system default.
+# @params: erlang_version
+function evm_default() {
+  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1 ]]
+  then
+    local evm_path=$HOME/.evm
+    echo $1 > $evm_path/evm_config/erlang_default
+
+    PATH="$(printf "$PATH" \
+          | awk -v RS=: -v ORS=: "/${evm_path//\//\/}/ {next} {print}" \
+          | sed -e 's#:$##')"
+    export PATH=$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1/bin:$PATH
+  else
+    echo "$1 is not installed yet. Use 'evm install $1' to install it"    
+  fi
+}
+
+# This function will show a list of all installed version of 
+# in the evm space
+function evm_installed() {
+  echo "Installed Erlang versions on this system"
+  echo
+    
+  for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | tac)
+  do
+      echo ${f#$FILE_PREFIX}
+  done
+  echo
+}
+
+# This function will show all erlang version cached on evm space
+function evm_cache() {
+  echo "Erlang version in cache:"
+  echo
+  for f in $(ls $DEFAULT_TAR_LOCATION)
+  do
+       ff=${f#$FILE_PREFIX}
+       echo ${ff%$FILE_SUFIX}
+  done
+  echo
+}
+
+function evm_help() {
+  local HELP_MESSAGE="
+      This will be the help message!!!
+  "
+  echo $HELP_MESSAGE
+}
+
+# This is supposed to be the main function of this file
+# Although all functions are actually exported
+# I'm thinking of putting all logic inside this function,
+# but maybe this is not a good idea.
+function evm() {
+  case $1 in
+    list)
+      evm_list
+    ;;
+
+    download)
+      evm_download $2
+    ;;
+
+    install)
+      evm_install $2
+    ;;
+
+    remove)
+      evm_remove $2
+    ;;
+
+    uninstall)
+      evm_uninstall $2
+    ;;
+
+    system)
+      evm_system
+    ;;
+
+    use)
+      evm_use $2
+    ;;
+
+    default)
+      evm_default $2
+    ;;
+
+    installed)
+      evm_installed
+    ;;
+
+    cache)
+      evm_cache
+    ;;
+
+    *)
+      evm_help
+    ;;
+
+  esac
+}
