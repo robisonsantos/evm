@@ -1,28 +1,67 @@
-evm
-===
+# EVM - Erlang Version Manager
 
-Erlang Version Manager
-----------------------
+This is a simple script which aims to make easy the management of different Erlang versions in your system.
 
-This is supposed to be a simple script to help managemenet of multi version of Erlang in the same machine.
+## Installation
 
-So far the help message is not ready :), but if you want to use it right now, simply execute the install script - which will create some directories in your home (execute the last line of the installation report):
+Simply execute:
 
-~/.evm/erlang_tars
-~/.evm/erlang_versions
-~/.evm/evm_config
-~/.evm/scripts
+    $ ./install
 
-To use this script, you first need to install lynx (<http://lynx.isc.org/>).
+And then add the following line to your .bashrc file:
 
-After that execute `$ evm list` to list all available erlang version on <http://www.erlang.org/>.
+    source $HOME/.evm/scripts/evm
 
-To install erlang R14B04, for instance, execute `$ evm install R14B04` 
+This will create some directories inside your $HOME/.evm dir:
 
-To use and specific version, already installed in your system, execute `$ evm use R14B04`
+- **erlang_tars** : the place where all erlang tarballs downloaded by evm will be cached.
+- **erlang_versions** : where the erlang enviroment will be installed.
+- **scripts** : the location of evm script itself.
+- **evm_config** : contains a single file pointing the current _default_ erlang version in use.
 
-To mark one version as default in the system, execute `$ evm default R14B04`
+## Usage
 
-TODO: Improve the help
+**EVM** is based on **RVM** (<https://rvm.io>), but of course without that so many features.
+It will help you to have as many erlang versions you like in your system, switching between them as easy as possible.
 
-This script was based on RVM (Ruby Version Manager)
+After the installation, you can check if everything is ok by executing:
+
+    $ evm help
+
+**TODO:** Improve the help message. It's currently just printing a useless message
+
+If that executes fine, then you'll should have a list of actions you can execute:
+
+- *list* (`$ evm list`)
+    This will fetch all the available erlang tarball versions from <http://lynx.isc.org/> presenting you a list of them.
+
+- *install* (`$ evm install <version>`)
+    This will download the erlang tarball identified by *version* ( if not yet downloaded ) and then it will simply execute **./configure - make - make install** passing some default values.
+
+    It will also give you a chance to download any erlang dependency you need, by stopping the process after the **./configure** command has finished.
+
+    **Obs:**: EVM *will not* downalod the erlang dependencies for you.
+
+- *installed* (`$evm installed`)
+- *download* (`$evm download`)
+- *remove* (`$evm remove`)
+- *uninstall* (`$evm uninstall`)
+- *cache* (`$evm cache`)
+- *system* (`$evm system`)
+- *use* (`$evm use`)
+- *help* (`$evm help`)
+
+## Dependencies
+
+This script is dependent on :
+
+- *lynx* (<http://lynx.isc.org/>)
+- *wget*
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
