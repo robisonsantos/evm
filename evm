@@ -142,7 +142,7 @@ function evm_install() {
 
     if [[ $cont != "Y" && $cont != "y" ]]
     then
-      echo "Canceling installation of $1"
+      echo "Cancelling installation of $1"
       cd ..
       rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$1
       return 0
