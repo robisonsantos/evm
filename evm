@@ -149,7 +149,7 @@ function evm_install() {
     fi
     
     echo "Compiling and installing $1"
-    make && makeinstall 1> "/tmp/erlang_$1_installation" 2>&1
+    make && make install 1> "/tmp/erlang_$1_installation" 2>&1
     rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$1
     cd -
     echo "Done!"
