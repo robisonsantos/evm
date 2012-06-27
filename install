@@ -28,7 +28,7 @@ else
 fi
 
 # Copy the script
-cp "evm" "$EVM_HOME/evm_config/scripts"
+cp "evm" "$EVM_HOME/scripts"
 
 echo
 echo "
