@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This simple script shold create the basic environment for 
+# This simple script should create the basic environment for 
 # EVM in the user's HOME
 
 EVM_HOME="$HOME/.evm"
