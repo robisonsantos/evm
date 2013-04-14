@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # evm2_0.sh
 #
 # Read the page http://www.erlang.org/download.html and catch
