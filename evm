@@ -41,7 +41,7 @@ function evm_list() {
   echo Available Erlang versions on $ERLANG_URL
   echo
 
-  for erlang in $(echo "$ERLANGS" | sort | tac); do
+  for erlang in $(echo "$ERLANGS" | sort | perl -e 'print reverse <>'); do
     echo "$erlang" | cut -d ' ' -f 1
   done
   echo
@@ -233,7 +233,7 @@ function evm_installed() {
   echo "Installed Erlang versions on this system"
   echo
     
-  for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | tac)
+  for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>')
   do
       echo ${f#$FILE_PREFIX}
   done
