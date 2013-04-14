@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This simple script should create the basic environment for 
 # EVM in the user's HOME
