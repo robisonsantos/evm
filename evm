@@ -37,7 +37,7 @@ function evm_list() {
     local AUTH="-pauth=$USER:$PASS"
   fi
 
-  local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | fgrep "* R" | sed 's/.*\* //')
+  local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | egrep "\s+\* R[1-9]+" | sed 's/.*\* //')
   echo Available Erlang versions on $ERLANG_URL
   echo
 
@@ -61,7 +61,7 @@ function evm_download() {
     local AUTH="-pauth=$USER:$PASS"
   fi
 
-  local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | fgrep "* R" | sed 's/.*\* //')
+  local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | egrep "\s+\* R[1-9]+" | sed 's/.*\* //')
   
   if [[ -z $(echo "$ERLANGS" | grep "$1") ]]
   then
@@ -109,7 +109,7 @@ function evm_install() {
       local AUTH="-pauth=$USER:$PASS"
     fi
 
-    local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | fgrep "* R" | sed 's/.*\* //')
+    local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | egrep "\s+\* R[1-9]+" | sed 's/.*\* //')
 
     if [[ -z $(echo "$ERLANGS" | grep "$1") ]]
     then
