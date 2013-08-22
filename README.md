@@ -33,7 +33,7 @@ After the installation, you can check if everything is ok by executing:
 If that executes fine, then you'll should have a list of actions you can execute:
 
 - *list* (`$ evm list`)
-    This will fetch all the available erlang tarball versions from <http://lynx.isc.org/> presenting you a list of them.
+    This will fetch all the available erlang tarball versions from <http://www.erlang.org/download.html> presenting you a list of them.
 
 - *install* (`$ evm install <version>`)
     This will download the erlang tarball identified by *version* ( if not yet downloaded ) and then it will simply execute **./configure - make - make install** passing some default values.
