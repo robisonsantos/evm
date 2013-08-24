@@ -28,8 +28,6 @@ After the installation, you can check if everything is ok by executing:
 
     $ evm help
 
-**TODO:** Improve the help message. It's currently just printing a useless message
-
 If that executes fine, then you'll should have a list of actions you can execute:
 
 - *list* (`$ evm list`)
@@ -50,6 +48,39 @@ If that executes fine, then you'll should have a list of actions you can execute
 - *system* (`$ evm system`)
 - *use* (`$ evm use`)
 - *help* (`$ evm help`)
+
+## EVM help
+
+    EVM Home: 
+        /home/robison/.evm
+    Default Version:
+        R15B01
+    Versions Ready To Use: 
+        R16B
+        R15B01
+
+    Usage:
+        * evm list
+            Lists available erlang versions which can be downloaded and installed on the system.
+        * evm cache
+            Lists available erlang versions which are in the evm space and not necessarily installed.
+        * evm download [version]
+            Downloads the erlang version.
+        * evm install [version]
+            Downloads and installs the specified erlang version.
+        * evm installed
+            Lists erlang versions which are built and are ready to be used.
+        * evm use [version]
+            Begins to use the specified erlang version.
+        * evm default [version]
+            Makes the specified erlang version as the default erlang version.
+        * evm remove [version]
+            Removes the erlang version completely from the evm space.
+        * evm uninstall [version]
+            Uninstalls erlang but keeps the erlang version within the evm.
+        * evm system
+            Alters the PATH within the shell to use the non-evm erlang
+
 
 ## Dependencies
 
