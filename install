@@ -6,13 +6,22 @@
 EVM_HOME="$HOME/.evm"
 DIRS="erlang_tars erlang_versions evm_config scripts"
 
+type lynx > /dev/null 2> /dev/null
+if [[ $? -eq "1" ]]; then
+   echo "Could not complete installation of evm."
+   echo "Please install lynx."
+   exit 1
+else
+   echo "Lynx found!"
+fi
+ 
 # For each dir, check whether it's already exists or not
 for dir in $DIRS
 do
   if [[ ! -d "$EVM_HOME/$dir" ]]
   then
     mkdir -p "$EVM_HOME/$dir"
-    echo "$EVM_HOME/$dir successfull created"
+    echo "$EVM_HOME/$dir successfully created"
   else
     echo "$EVM_HOME/$dir already exists and will not be replaced"
   fi
@@ -22,7 +31,7 @@ done
 if [[ ! -f "$EVM_HOME/evm_config/erlang_default" ]]
 then 
   touch "$EVM_HOME/evm_config/erlang_default"
-  echo "$EVM_HOME/evm_config/erlang_default succesfull created"
+  echo "$EVM_HOME/evm_config/erlang_default succesfully created"
 else
   echo "$EVM_HOME/evm_config/erlang_default already exists and will not be replaced"
 fi
