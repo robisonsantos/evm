@@ -11,17 +11,24 @@ ERLANG_URL="http://www.erlang.org"
 FILE_PATH="/download/otp_src_"
 FILE_EXTENSION=".tar.gz"
 FILE_PREFIX="otp_src_"
-DEFAULT_TAR_LOCATION=$HOME"/.evm/erlang_tars/"
-DEFAULT_INSTALL_LOCATION=$HOME"/.evm/erlang_versions/"
+EVM_HOME=$HOME"/.evm"
+DEFAULT_TAR_LOCATION=$EVM_HOME"/erlang_tars/"
+DEFAULT_INSTALL_LOCATION=$EVM_HOME"/erlang_versions/"
 
 # TODO: add here some way to discover what's the 
 #       default version and what's been set to be used and the ones already downloaded
 # For now just load the default version
-if [[ -f "$HOME/.evm/evm_config/erlang_default" ]]
+if [[ -f "$EVM_HOME/evm_config/erlang_default" ]]
 then
-  default=$(cat "$HOME/.evm/evm_config/erlang_default")
+  default=$(cat "$EVM_HOME/evm_config/erlang_default")
   export PATH="$PATH:$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$default/bin"
 fi
+
+function list_available_erl_versions() {
+    lynx -dump -nolist "$ERLANG_ORG" "$AUTH" \
+        | \grep -P "\* R[1-9]+" \
+        | sed 's/.*\* //' 
+}
 
 # This function is responsible for listing all 
 # available erlang versions from erlang.org page
@@ -37,10 +44,10 @@ function evm_list() {
     local AUTH="-pauth=$USER:$PASS"
   fi
 
-  local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | egrep "\s+\* R[1-9]+" | sed 's/.*\* //')
+  local ERLANGS=$(list_available_erl_versions)
   echo Available Erlang versions on $ERLANG_URL
   echo
-
+  
   for erlang in $(echo "$ERLANGS" | sort | perl -e 'print reverse <>'); do
     echo "$erlang" | cut -d ' ' -f 1
   done
@@ -50,7 +57,7 @@ function evm_list() {
 
 # This function will receive the version name to be 
 # downloaded. If the version exists in the erlang.org
-# it will be stored at $HOME/.evm/erlang_tars. If not, a message is printed
+# it will be stored at $EVM_HOME/erlang_tars. If not, a message is printed
 # to user
 # @params: erlang_version
 function evm_download() {
@@ -61,9 +68,9 @@ function evm_download() {
     local AUTH="-pauth=$USER:$PASS"
   fi
 
-  local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | egrep "\s+\* R[1-9]+" | sed 's/.*\* //')
+  local ERLANGS=$(list_available_erl_versions)
   
-  if [[ -z $(echo "$ERLANGS" | grep "$1") ]]
+  if [[ -z $(echo "$ERLANGS" | grep -P "$1") ]]
   then
     echo "$1 - This version is not available at $ERLANG_ORG"
   else
@@ -83,10 +90,9 @@ function evm_download() {
 # the system version of ERLANG available.
 # @params: none
 function evm_system() {
-  local evm_path=$HOME/.evm
-  
+
   PATH="$(printf "$PATH" \
-  | awk -v RS=: -v ORS=: "/${evm_path//\//\/}/ {next} {print}" \
+  | awk -v RS=: -v ORS=: "/${EVM_HOME//\//\/}/ {next} {print}" \
   | sed -e 's#:$##')"
 
   export PATH
@@ -109,7 +115,7 @@ function evm_install() {
       local AUTH="-pauth=$USER:$PASS"
     fi
 
-    local ERLANGS=$(lynx -dump -nolist "$ERLANG_ORG" "$AUTH" | egrep "\s+\* R[1-9]+" | sed 's/.*\* //')
+    local ERLANGS=$(list_available_erl_versions)
 
     if [[ -z $(echo "$ERLANGS" | grep "$1") ]]
     then
@@ -129,10 +135,15 @@ function evm_install() {
   else
     mkdir -p $DEFAULT_INSTALL_LOCATION
     echo "Inflating $DEFAULT_TAR_LOCATION/$FILE_PREFIX$1$FILE_EXTENSION"
-    tar -xzf $DEFAULT_TAR_LOCATION/$FILE_PREFIX$1$FILE_EXTENSION -C $DEFAULT_TAR_LOCATION
+    
+    # Handles the special case where otp_src_R15B03-1.tar.gz gets untarred into otp_src_R15B03
+    # tar xvzf ~/.evm/erlang_tars/otp_src_R15B03-1.tar.gz --strip-components 1 -C otp_src_R15B03-1
+    local UNTAR_DIR=$DEFAULT_TAR_LOCATION/$FILE_PREFIX$1
+    mkdir $UNTAR_DIR
+    tar -xzf $DEFAULT_TAR_LOCATION/$FILE_PREFIX$1$FILE_EXTENSION -C $UNTAR_DIR --strip-components 1
     
     echo "Configuring..."
-    cd $DEFAULT_TAR_LOCATION/$FILE_PREFIX$1
+    cd $UNTAR_DIR
     ./configure --prefix $DEFAULT_INSTALL_LOCATION/$FILE_PREFIX$1
 
     echo 
@@ -199,9 +210,8 @@ function evm_uninstall() {
 function evm_use() {
   if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1 ]]
   then
-    local evm_path=$HOME/.evm
     PATH="$(printf "$PATH" \
-         | awk -v RS=: -v ORS=: "/${evm_path//\//\/}/ {next} {print}" \
+         | awk -v RS=: -v ORS=: "/${EVM_HOME//\//\/}/ {next} {print}" \
          | sed -e 's#:$##')"
 
     export PATH=$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1/bin:$PATH
@@ -215,11 +225,10 @@ function evm_use() {
 function evm_default() {
   if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1 ]]
   then
-    local evm_path=$HOME/.evm
-    echo $1 > $evm_path/evm_config/erlang_default
+    echo $1 > $EVM_HOME/evm_config/erlang_default
 
     PATH="$(printf "$PATH" \
-          | awk -v RS=: -v ORS=: "/${evm_path//\//\/}/ {next} {print}" \
+          | awk -v RS=: -v ORS=: "/${EVM_HOME//\//\/}/ {next} {print}" \
           | sed -e 's#:$##')"
     export PATH=$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1/bin:$PATH
   else
@@ -253,10 +262,52 @@ function evm_cache() {
 }
 
 function evm_help() {
-  local HELP_MESSAGE="
-      This will be the help message!!!
-  "
-  echo $HELP_MESSAGE
+    
+    local default_version=$(cat $EVM_HOME/evm_config/erlang_default)
+    
+    local available_versions=$(ls -l ${DEFAULT_INSTALL_LOCATION} \
+        | grep '^d' \
+        | awk '{print $9}' \
+        | cut -d '_' -f 3 \
+        | sed 's/^R/\tR/g' \
+        | sort \
+        | perl -e 'print reverse <>')
+    
+    local HELP_FILE=$EVM_HOME"/.evm_helptext"
+    cat > $HELP_FILE <<_EOF
+
+    EVM Home: 
+        ${EVM_HOME}
+    Default Version:
+        ${default_version:-"None"}
+    Versions Ready To Use: 
+${available_versions:-"        None"}
+
+    Usage:
+        * evm list
+            Lists available erlang versions which can be downloaded and installed on the system.
+        * evm cache
+            Lists available erlang versions which are in the evm space and not necessarily installed.
+        * evm download [version]
+            Downloads the erlang version.
+        * evm install [version]
+            Downloads and installs the specified erlang version.
+        * evm installed
+            Lists erlang versions which are built and are ready to be used.
+        * evm use [version]
+            Begins to use the specified erlang version.
+        * evm default [version]
+            Makes the specified erlang version as the default erlang version.
+        * evm remove [version]
+            Removes the erlang version completely from the evm space.
+        * evm uninstall [version]
+            Uninstalls erlang but keeps the erlang version within the evm.
+        * evm system
+            Alters the PATH within the shell to use the non-evm erlang.
+_EOF
+
+    cat $HELP_FILE
+    rm $HELP_FILE
 }
 
 # This is supposed to be the main function of this file
