@@ -41,13 +41,28 @@ If that executes fine, then you'll should have a list of actions you can execute
     **Obs:**: EVM *will not* downalod the erlang dependencies for you.
 
 - *installed* (`$ evm installed`)
-- *download* (`$ evm download`)
-- *remove* (`$ evm remove`)
-- *uninstall* (`$ evm uninstall`)
+    This will show all the installed erlang versions on your system.
+
+- *download* (`$ evm download <version>`)
+    If the version informed is available, this command will download it from <http://www.erlang.org/download.html> and then it will store it for future installation.
+
+- *remove* (`$ evm remove <version>`)
+    If the version informed has been chached on your system, this option will remove it. Note that if the informed version is installed, the command will also uninstalled it.
+
+- *uninstall* (`$ evm uninstall <version>`)
+    If the version informed has been installed on your system, this option will simply uninstall it.
+
 - *cache* (`$ evm cache`)
+    This will list of erlang versions currently cached on your system.
+
 - *system* (`$ evm system`)
-- *use* (`$ evm use`)
+    If you have erlang installed outside EVM, then this command will change the path to include that version instead.
+
+- *use* (`$ evm use <version>`)
+    This will change the path of your current shell to use the specified erlang version, if it's already installed.
+
 - *help* (`$ evm help`)
+    This will show something similar as bellow (thanks to neowulf33):
 
 ## EVM help
 
