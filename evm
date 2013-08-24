@@ -266,11 +266,11 @@ function evm_help() {
     local default_version=$(cat $EVM_HOME/evm_config/erlang_default)
     
     local available_versions=$(ls -l ${DEFAULT_INSTALL_LOCATION} \
-        | grep '^d' 
-        | awk '{print $9}' 
-        | cut -d '_' -f 3 
-        | sed 's/^R/\tR/g' 
-        | sort 
+        | grep '^d' \
+        | awk '{print $9}' \
+        | cut -d '_' -f 3 \
+        | sed 's/^R/\tR/g' \
+        | sort \
         | perl -e 'print reverse <>')
     
     local HELP_FILE=$EVM_HOME"/.evm_helptext"
@@ -286,10 +286,14 @@ ${available_versions:-"        None"}
     Usage:
         * evm list
             Lists available erlang versions which can be downloaded and installed on the system.
+        * evm cache
+            Lists available erlang versions which are in the evm space and not necessarily installed.
         * evm download [version]
             Downloads the erlang version.
         * evm install [version]
             Downloads and installs the specified erlang version.
+        * evm installed
+            Lists erlang versions which are built and are ready to be used.
         * evm use [version]
             Begins to use the specified erlang version.
         * evm default [version]
