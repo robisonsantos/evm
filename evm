@@ -26,7 +26,7 @@ fi
 
 function list_available_erl_versions() {
     lynx -dump -nolist "$ERLANG_ORG" "$AUTH" \
-        | \grep -P "\* R[1-9]+" \
+        | \grep -e "\* R[1-9]\{1,\}" \
         | sed 's/.*\* //' 
 }
 
