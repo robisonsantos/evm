@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# evm2_0.sh
+# evm3_0.sh
 #
 # Read the page http://www.erlang.org/download.html and catch
 # all available erlang versions to download
 #
 # Dependencies: lynx
+#  Added support to new versioning of erlang "OTP ..." instead of "R..."
+#
 
 ERLANG_ORG="http://www.erlang.org/download.html"
 ERLANG_URL="http://www.erlang.org"
@@ -25,9 +27,17 @@ then
 fi
 
 function list_available_erl_versions() {
-    lynx -dump -nolist "$ERLANG_ORG" "$AUTH" \
-        | \grep -P "\* R[1-9]+" \
-        | sed 's/.*\* //' 
+  lynx -dump -nolist "$ERLANG_ORG" "$AUTH" \
+      | \grep -P "\* (R|OTP\s*)[1-9]+" \
+      | sed 's/.*\* //' | sed 's/ /_/'  
+}
+
+function strip_version() {
+  if [[ $1 == OTP_* ]]; then
+    echo $1 | sed 's/OTP_//'
+  else
+    echo $1
+  fi
 }
 
 # This function is responsible for listing all 
@@ -48,7 +58,7 @@ function evm_list() {
   echo Available Erlang versions on $ERLANG_URL
   echo
   
-  for erlang in $(echo "$ERLANGS" | sort | perl -e 'print reverse <>'); do
+  for erlang in $(echo "$ERLANGS"); do
     echo "$erlang" | cut -d ' ' -f 1
   done
   echo
@@ -79,7 +89,8 @@ function evm_download() {
       echo "$1 - is already present at $DEFAULT_TAR_LOCATION"
     else
       mkdir -p $DEFAULT_TAR_LOCATION
-      wget -P $DEFAULT_TAR_LOCATION $ERLANG_URL$FILE_PATH$1$FILE_EXTENSION
+      VER="$(strip_version $1)"
+      wget -P $DEFAULT_TAR_LOCATION $ERLANG_URL$FILE_PATH$VER$FILE_EXTENSION
     fi
   fi
   echo
@@ -103,8 +114,9 @@ function evm_system() {
 # @params: erlang_version
 # TODO: only tries to download if the file is not cached yet
 function evm_install() {
+  VER="$(strip_version $1)"
   # Download version only if it does not existed cached 
-  if [[ -f "$DEFAULT_TAR_LOCATION/$FILE_PREFIX$1$FILE_EXTENSION" ]]
+  if [[ -f "$DEFAULT_TAR_LOCATION/$FILE_PREFIX$VER$FILE_EXTENSION" ]]
   then
     echo "$1 is already cached, don't need to download it"
   else
@@ -123,28 +135,28 @@ function evm_install() {
       return 1 
     else
       mkdir -p $DEFAULT_TAR_LOCATION
-      wget -P $DEFAULT_TAR_LOCATION $ERLANG_URL$FILE_PATH$1$FILE_EXTENSION     
+      wget -P $DEFAULT_TAR_LOCATION $ERLANG_URL$FILE_PATH$VER$FILE_EXTENSION     
     fi
   fi
 
   # Install the version if not installed yet
-  if [[ -d "$DEFAULT_INSTALL_LOCATION/$FILE_PREFIX$1" ]]
+  if [[ -d "$DEFAULT_INSTALL_LOCATION/$FILE_PREFIX$VER" ]]
   then
     echo "$1 - This version is already installed at $DEFAULT_INSTALL_LOCATION"
     echo "Try evm 'remove $1' and then 'evm install $1' again"
   else
     mkdir -p $DEFAULT_INSTALL_LOCATION
-    echo "Inflating $DEFAULT_TAR_LOCATION/$FILE_PREFIX$1$FILE_EXTENSION"
+    echo "Inflating $DEFAULT_TAR_LOCATION/$FILE_PREFIX$VER$FILE_EXTENSION"
     
     # Handles the special case where otp_src_R15B03-1.tar.gz gets untarred into otp_src_R15B03
     # tar xvzf ~/.evm/erlang_tars/otp_src_R15B03-1.tar.gz --strip-components 1 -C otp_src_R15B03-1
-    local UNTAR_DIR=$DEFAULT_TAR_LOCATION/$FILE_PREFIX$1
+    local UNTAR_DIR=$DEFAULT_TAR_LOCATION/$FILE_PREFIX$VER
     mkdir $UNTAR_DIR
-    tar -xzf $DEFAULT_TAR_LOCATION/$FILE_PREFIX$1$FILE_EXTENSION -C $UNTAR_DIR --strip-components 1
+    tar -xzf $DEFAULT_TAR_LOCATION/$FILE_PREFIX$VER$FILE_EXTENSION -C $UNTAR_DIR --strip-components 1
     
     echo "Configuring..."
     cd $UNTAR_DIR
-    ./configure --prefix $DEFAULT_INSTALL_LOCATION/$FILE_PREFIX$1
+    ./configure --prefix $DEFAULT_INSTALL_LOCATION/$FILE_PREFIX$VER
 
     echo 
     echo "Continue with installation?(y/n)"
@@ -155,13 +167,13 @@ function evm_install() {
     then
       echo "Cancelling installation of $1"
       cd ..
-      rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$1
+      rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER
       return 0
     fi
     
     echo "Compiling and installing $1"
-    make && make install 1> "/tmp/erlang_$1_installation" 2>&1
-    rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$1
+    make && make install 1> "/tmp/erlang_$VER_installation" 2>&1
+    rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER
     cd -
     echo "Done!"
     echo "Use 'evm default $1' to set this version as default or 'evm use $1' to start using this version right now"
@@ -171,19 +183,20 @@ function evm_install() {
 # This function will remove the erlang version from the evm space
 # @params: erlang_version
 function evm_remove() {
-  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1 ]]
+  VER="$(strip_version $1)"
+  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER ]]
   then
     echo "Uninstalling $1..."
-    rm -rf $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1
+    rm -rf $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER
     echo "Uninstalled"
   else
     echo "$1 not installed"
   fi
 
-  if [[ -d $DEFAULT_TAR_LOCATION$FILE_PREFIX$1$FILE_EXTENSION ]]
+  if [[ -d $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION ]]
   then
     echo "Removing $1..."
-    rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$1$FILE_EXTENSION
+    rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION
     echo "Removed"
   else
     echo "$1 not downloaded"
@@ -194,10 +207,11 @@ function evm_remove() {
 # system, but will leave the erlang tar in the evm space
 # @params: erlang_version
 function evm_uninstall() {
-  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1 ]]
+  VER="$(strip_version $1)"
+  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER ]]
   then
     echo "Uninstalling $1..."
-    rm -rf $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1
+    rm -rf $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER
     echo "Uninstalled"
   else
     echo "$1 not installed"
@@ -208,13 +222,14 @@ function evm_uninstall() {
 # available in the PATH
 # @params: erlang_version
 function evm_use() {
-  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1 ]]
+  VER="$(strip_version $1)"
+  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER ]]
   then
     PATH="$(printf "$PATH" \
          | awk -v RS=: -v ORS=: "/${EVM_HOME//\//\/}/ {next} {print}" \
          | sed -e 's#:$##')"
 
-    export PATH=$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1/bin:$PATH
+    export PATH=$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER/bin:$PATH
   else
     echo "$1 - Version not installed. Use 'evm install $1' to install it"
   fi
@@ -223,14 +238,15 @@ function evm_use() {
 # This function will set this erlang version as system default.
 # @params: erlang_version
 function evm_default() {
-  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1 ]]
+  VER="$(strip_version $1)"
+  if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER ]]
   then
     echo $1 > $EVM_HOME/evm_config/erlang_default
 
     PATH="$(printf "$PATH" \
           | awk -v RS=: -v ORS=: "/${EVM_HOME//\//\/}/ {next} {print}" \
           | sed -e 's#:$##')"
-    export PATH=$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$1/bin:$PATH
+    export PATH=$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER/bin:$PATH
   else
     echo "$1 is not installed yet. Use 'evm install $1' to install it"    
   fi
