@@ -17,21 +17,6 @@ EVM_HOME=$HOME"/.evm"
 DEFAULT_TAR_LOCATION=$EVM_HOME"/erlang_tars/"
 DEFAULT_INSTALL_LOCATION=$EVM_HOME"/erlang_versions/"
 
-# TODO: add here some way to discover what's the 
-#       default version and what's been set to be used and the ones already downloaded
-# For now just load the default version
-if [[ -f "$EVM_HOME/evm_config/erlang_default" ]]
-then
-  default=$(cat "$EVM_HOME/evm_config/erlang_default")
-  export PATH="$PATH:$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$default/bin"
-fi
-
-function list_available_erl_versions() {
-  lynx -dump -nolist "$ERLANG_ORG" "$AUTH" \
-      | \grep -P "\* (R|OTP\s*)[1-9]+" \
-      | sed 's/.*\* //' | sed 's/ /_/'  
-}
-
 function strip_version() {
   if [[ $1 == OTP_* ]]; then
     echo $1 | sed 's/OTP_//'
@@ -40,6 +25,23 @@ function strip_version() {
   fi
 }
 
+function list_available_erl_versions() {
+  lynx -dump -nolist "$ERLANG_ORG" "$AUTH" \
+      | \grep -P "\* (R|OTP\s*)[1-9]+" \
+      | sed 's/.*\* //' | sed 's/ /_/'  
+}
+
+
+# TODO: add here some way to discover what's the 
+#       default version and what's been set to be used and the ones already downloaded
+# For now just load the default version
+
+if [[ -f "$EVM_HOME/evm_config/erlang_default" ]]
+then
+  default=$(cat "$EVM_HOME/evm_config/erlang_default")
+  VER="$(strip_version $default)"
+  export PATH="$PATH:$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER/bin"
+fi
 # This function is responsible for listing all 
 # available erlang versions from erlang.org page
 # @params: none
