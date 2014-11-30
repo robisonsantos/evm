@@ -200,7 +200,7 @@ function evm_remove() {
     echo "$1 not installed"
   fi
 
-  if [[ -d $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION ]]
+  if [[ -f $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION ]]
   then
     echo "Removing $1..."
     rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION
