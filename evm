@@ -31,17 +31,18 @@ function list_available_erl_versions() {
       | sed 's/.*\* //' | sed 's/ /_/'  
 }
 
-
 # TODO: add here some way to discover what's the 
 #       default version and what's been set to be used and the ones already downloaded
 # For now just load the default version
+function _load() {
+  if [[ -f "$EVM_HOME/evm_config/erlang_default" ]]
+  then
+    default=$(cat "$EVM_HOME/evm_config/erlang_default")
+    local VER="$(strip_version $default)"
+    export PATH="$PATH:$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER/bin"
+  fi
+}
 
-if [[ -f "$EVM_HOME/evm_config/erlang_default" ]]
-then
-  default=$(cat "$EVM_HOME/evm_config/erlang_default")
-  VER="$(strip_version $default)"
-  export PATH="$PATH:$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER/bin"
-fi
 # This function is responsible for listing all 
 # available erlang versions from erlang.org page
 # @params: none
@@ -91,7 +92,7 @@ function evm_download() {
       echo "$1 - is already present at $DEFAULT_TAR_LOCATION"
     else
       mkdir -p $DEFAULT_TAR_LOCATION
-      VER="$(strip_version $1)"
+      local VER="$(strip_version $1)"
       wget -P $DEFAULT_TAR_LOCATION $ERLANG_URL$FILE_PATH$VER$FILE_EXTENSION
     fi
   fi
@@ -116,7 +117,7 @@ function evm_system() {
 # @params: erlang_version
 # TODO: only tries to download if the file is not cached yet
 function evm_install() {
-  VER="$(strip_version $1)"
+  local VER="$(strip_version $1)"
   # Download version only if it does not existed cached 
   if [[ -f "$DEFAULT_TAR_LOCATION/$FILE_PREFIX$VER$FILE_EXTENSION" ]]
   then
@@ -185,7 +186,7 @@ function evm_install() {
 # This function will remove the erlang version from the evm space
 # @params: erlang_version
 function evm_remove() {
-  VER="$(strip_version $1)"
+  local VER="$(strip_version $1)"
   if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER ]]
   then
     echo "Uninstalling $1..."
@@ -209,7 +210,7 @@ function evm_remove() {
 # system, but will leave the erlang tar in the evm space
 # @params: erlang_version
 function evm_uninstall() {
-  VER="$(strip_version $1)"
+  local VER="$(strip_version $1)"
   if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER ]]
   then
     echo "Uninstalling $1..."
@@ -224,13 +225,18 @@ function evm_uninstall() {
 # available in the PATH
 # @params: erlang_version
 function evm_use() {
-  VER="$(strip_version $1)"
+  local VER="$(strip_version $1)"
   if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER ]]
   then
-    PATH="$(printf "$PATH" \
-         | awk -v RS=: -v ORS=: "/${EVM_HOME//\//\/}/ {next} {print}" \
-         | sed -e 's#:$##')"
-
+    ## Remove any old entries for erlangs managed by evm
+    ## from the path variable and add the default one
+    ## Here I use sed "s,<pattern>,<replacement>" 
+    ## To remove any reference of erlang, duplicated ::,
+    ## : from the beginning and from the end of path 
+    for d in $DEFAULT_INSTALL_LOCATION*
+    do
+      PATH="$(echo $PATH | sed -e "s,$d/bin,,g ; s,^:,, ; s,::,:,g ; s,:$,,")"
+    done
     export PATH=$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER/bin:$PATH
   else
     echo "$1 - Version not installed. Use 'evm install $1' to install it"
@@ -240,15 +246,11 @@ function evm_use() {
 # This function will set this erlang version as system default.
 # @params: erlang_version
 function evm_default() {
-  VER="$(strip_version $1)"
+  local VER="$(strip_version $1)"
   if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER ]]
   then
     echo $1 > $EVM_HOME/evm_config/erlang_default
-
-    PATH="$(printf "$PATH" \
-          | awk -v RS=: -v ORS=: "/${EVM_HOME//\//\/}/ {next} {print}" \
-          | sed -e 's#:$##')"
-    export PATH=$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER/bin:$PATH
+    evm_use $1
   else
     echo "$1 is not installed yet. Use 'evm install $1' to install it"    
   fi
@@ -380,3 +382,6 @@ function evm() {
 
   esac
 }
+
+## Load default version
+_load
