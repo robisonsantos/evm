@@ -37,7 +37,7 @@ function list_available_erl_versions() {
 function _load() {
   if [[ -f "$EVM_HOME/evm_config/erlang_default" ]]
   then
-    default=$(cat "$EVM_HOME/evm_config/erlang_default")
+    default="$(cat "$EVM_HOME/evm_config/erlang_default")"
     local VER="$(strip_version $default)"
     export PATH="$PATH:$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER/bin"
   fi
@@ -57,7 +57,7 @@ function evm_list() {
     local AUTH="-pauth=$USER:$PASS"
   fi
 
-  local ERLANGS=$(list_available_erl_versions)
+  local ERLANGS="$(list_available_erl_versions)"
   echo Available Erlang versions on $ERLANG_URL
   echo
   
@@ -76,12 +76,12 @@ function evm_list() {
 function evm_download() {
   if [[ ! -z "$http_proxy" ]] ## http_proxy is set
   then
-    local USER=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)
-    local PASS=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)
+    local USER="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)"
+    local PASS="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)"
     local AUTH="-pauth=$USER:$PASS"
   fi
 
-  local ERLANGS=$(list_available_erl_versions)
+  local ERLANGS="$(list_available_erl_versions)"
   
   if [[ -z $(echo "$ERLANGS" | grep -P "$1") ]]
   then
@@ -129,12 +129,12 @@ function evm_install() {
   else
     if [[ ! -z "$http_proxy" ]] ## http_proxy is set
     then
-      local USER=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)
-      local PASS=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)
+      local USER="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)"
+      local PASS="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)"
       local AUTH="-pauth=$USER:$PASS"
     fi
 
-    local ERLANGS=$(list_available_erl_versions)
+    local ERLANGS="$(list_available_erl_versions)"
 
     if [[ -z $(echo "$ERLANGS" | grep "$1") ]]
     then
@@ -287,15 +287,15 @@ function evm_cache() {
 
 function evm_help() {
     
-    local default_version=$(cat $EVM_HOME/evm_config/erlang_default)
+    local default_version="$(cat $EVM_HOME/evm_config/erlang_default)"
     
-    local available_versions=$(ls -l ${DEFAULT_INSTALL_LOCATION} \
+    local available_versions="$(ls -l ${DEFAULT_INSTALL_LOCATION} \
         | grep '^d' \
         | awk '{print $9}' \
         | cut -d '_' -f 3 \
         | sed 's/^R/\tR/g' \
         | sort \
-        | perl -e 'print reverse <>')
+        | perl -e 'print reverse <>')"
     
     local HELP_FILE=$EVM_HOME"/.evm_helptext"
     cat > $HELP_FILE <<_EOF
