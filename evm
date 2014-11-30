@@ -104,11 +104,15 @@ function evm_download() {
 # the system version of ERLANG available.
 # @params: none
 function evm_system() {
-
-  PATH="$(printf "$PATH" \
-  | awk -v RS=: -v ORS=: "/${EVM_HOME//\//\/}/ {next} {print}" \
-  | sed -e 's#:$##')"
-
+  ## Remove any old entries for erlangs managed by evm
+  ## from the path variable and add the default one
+  ## Here I use sed "s,<pattern>,<replacement>" 
+  ## To remove any reference of erlang, duplicated ::,
+  ## : from the beginning and from the end of path 
+  for d in $DEFAULT_INSTALL_LOCATION*
+  do
+    PATH="$(echo $PATH | sed -e "s,$d/bin,,g ; s,^:,, ; s,::,:,g ; s,:$,,")"
+  done
   export PATH
 }
 
