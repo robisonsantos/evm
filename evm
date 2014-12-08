@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -x
+#!/usr/bin/env bash
 # evm4_0.sh
 #
 # Read the page http://www.erlang.org/download.html and catch
@@ -8,7 +8,7 @@
 #  Added support to new versioning of erlang "OTP ..." instead of "R..."
 #
 
-VERSION="4.0.0"
+VERSION="4.0.1"
 ERLANG_ORG="http://www.erlang.org/download.html"
 ERLANG_URL="http://www.erlang.org"
 FILE_PATH="/download/otp_src_"
@@ -273,13 +273,65 @@ function evm_default() {
 # This function will show a list of all installed version of 
 # in the evm space
 function evm_installed() {
+  ## Colors
+  local LIGHT_GREEN="\e[1;32m"
+  local LIGHT_CYAN="\e[1;36m"
+  local NO_COLOR="\e[0m"
+  local COLOR_SUPPORT="FALSE"
+
+  # Just set a flag in case color is support by this shell
+  if tput colors >> /dev/null 2>&1; then
+    COLOR_SUPPORT="TRUE"
+  fi
+ 
   echo "Installed Erlang versions on this system"
   echo
-    
+
+  # Get the default version
+  local default_version="$(cat $EVM_HOME/evm_config/erlang_default)"
+        default_version="$(strip_version $default_version)"
+
+  # Get the current versin in use from PATH
+  local version_in_use="$(echo $PATH | grep -Po "$DEFAULT_INSTALL_LOCATION.*?/bin" | grep -Po "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
+
+  ## TODO: think of a way to sort versions better 
   for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>')
   do
-      echo ${f#$FILE_PREFIX}
+    local ver="${f#$FILE_PREFIX}"
+ 
+    # Apply symbols and colors
+    if [[ "$ver" == "$default_version" && "$ver" == "$version_in_use" ]]; then
+      ver="=* $ver"
+
+      if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
+        ver="${LIGHT_GREEN}$ver${NO_COLOR}"
+      fi
+
+    elif [[ "$ver" == "$default_version" ]]; then
+      ver=" * $ver"
+
+      if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
+        ver="${LIGHT_CYAN}$ver${NO_COLOR}"
+      fi
+
+    elif [[ "$ver" == "$version_in_use" ]]; then
+      ver="=> $ver"
+      
+      if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
+        ver="${LIGHT_GREEN}$ver${NO_COLOR}"
+      fi
+
+    fi
+ 
+    echo -e "$ver"
   done
+
+  echo
+  echo "------"
+  echo "=* : current and default"
+  echo "=> : current"
+  echo " * : default"
+
   echo
 }
 

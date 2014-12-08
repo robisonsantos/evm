@@ -33,12 +33,14 @@ If that executes fine, then you'll should have a list of actions you can execute
 - *list* (`$ evm list`)
     This will fetch all the available erlang tarball versions from <http://www.erlang.org/download.html> presenting you a list of them.
 
-- *install* (`$ evm install <version>`)
+- *install* (`$ evm install <version>` [-y])
     This will download the erlang tarball identified by *version* ( if not yet downloaded ) and then it will simply execute **./configure - make - make install** passing some default values.
 
     It will also give you a chance to download any erlang dependency you need, by stopping the process after the **./configure** command has finished.
 
-    **Obs:**: EVM *will not* downalod the erlang dependencies for you.
+    **Obs:**: EVM *will not* download the erlang dependencies for you.
+    
+    If you are sure you have all dependencies installed and don't want to be asked about continuing with the installation, use the option -y AFTER the erlang_version. This will make the script continue with installation without asking anything to you.
 
 - *installed* (`$ evm installed`)
     This will show all the installed erlang versions on your system.
@@ -60,6 +62,9 @@ If that executes fine, then you'll should have a list of actions you can execute
 
 - *use* (`$ evm use <version>`)
     This will change the path of your current shell to use the specified erlang version, if it's already installed.
+
+- *version* (`$ evm version`)
+    This will show the current version of this script running on your machine.
 
 - *help* (`$ evm help`)
     This will show something similar as bellow (thanks to neowulf33):
