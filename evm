@@ -398,7 +398,7 @@ ${available_versions:-"        None"}
 _EOF
 
     cat $HELP_FILE
-    rm $HELP_FILE
+    rm -f $HELP_FILE
 }
 
 # This is supposed to be the main function of this file
