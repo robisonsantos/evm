@@ -28,7 +28,7 @@ function strip_version() {
 
 function list_available_erl_versions() {
   lynx -dump -nolist "$ERLANG_ORG" "$AUTH" \
-      | \grep -P "\* (R|OTP\s*)[1-9]+" \
+      | \grep -E "\* (R|OTP\s*)[1-9]+" \
       | sed 's/.*\* //' | sed 's/ /_/'  
 }
 
@@ -84,7 +84,7 @@ function evm_download() {
 
   local ERLANGS="$(list_available_erl_versions)"
   
-  if [[ -z $(echo "$ERLANGS" | grep -P "$1") ]]
+  if [[ -z $(echo "$ERLANGS" | grep -E "$1") ]]
   then
     echo "$1 - This version is not available at $ERLANG_ORG"
   else
@@ -292,7 +292,7 @@ function evm_installed() {
         default_version="$(strip_version $default_version)"
 
   # Get the current versin in use from PATH
-  local version_in_use="$(echo $PATH | grep -Po "$DEFAULT_INSTALL_LOCATION.*?/bin" | grep -Po "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
+  local version_in_use="$(echo $PATH | grep -Eo "$DEFAULT_INSTALL_LOCATION.*?/bin" | grep -Eo "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
 
   ## TODO: think of a way to sort versions better 
   for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>')
