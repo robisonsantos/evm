@@ -291,8 +291,14 @@ function evm_installed() {
   local default_version="$(cat $EVM_HOME/evm_config/erlang_default)"
         default_version="$(strip_version $default_version)"
 
+  local system="$(uname -s)"
+  
   # Get the current versin in use from PATH
-  local version_in_use="$(echo $PATH | grep -Eo "$DEFAULT_INSTALL_LOCATION.*?/bin" | grep -Eo "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
+  if [ "$system" == "Darwin" ]; then
+      local version_in_use="$(echo $PATH | egrep -o "$DEFAULT_INSTALL_LOCATION.*?/bin" | egrep -o "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
+  else
+      local version_in_use="$(echo $PATH | grep -Po "$DEFAULT_INSTALL_LOCATION.*?/bin" | grep -Po "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
+  fi
 
   ## TODO: think of a way to sort versions better 
   for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>')
@@ -307,8 +313,7 @@ function evm_installed() {
         ver="${LIGHT_GREEN}$ver${NO_COLOR}"
       fi
 
-    elif [[ "$ver" == "$default_version" ]]; then
-      ver=" * $ver"
+
 
       if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
         ver="${LIGHT_CYAN}$ver${NO_COLOR}"
