@@ -109,6 +109,12 @@ This script is dependent on :
 - *lynx* (<http://lynx.isc.org/>)
 - *wget*
 
+## Erlang dependencies
+
+On Debian based system, this is the list of dependencies you probably need:
+
+   sudo apt-get install openssl libssl-dev fop xsltproc unixodbc-dev libxml2-utils libwxbase2.8 libwxgtk2.8-dev libqt4-opengl-dev
+
 ## Contributing
 
 1. Fork it
