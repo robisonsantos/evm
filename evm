@@ -4,7 +4,6 @@
 # Read the page http://www.erlang.org/download.html and catch
 # all available erlang versions to download
 #
-# Dependencies: lynx
 #  Added support to new versioning of erlang "OTP ..." instead of "R..."
 #
 

@@ -106,7 +106,6 @@ If that executes fine, then you'll should have a list of actions you can execute
 
 This script is dependent on :
 
-- *lynx* (<http://lynx.isc.org/>)
 - *wget*
 
 ## Erlang dependencies
