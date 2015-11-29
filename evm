@@ -27,9 +27,10 @@ function strip_version() {
 }
 
 function list_available_erl_versions() {
-  lynx -dump -nolist "$ERLANG_ORG" "$AUTH" \
-      | \grep -E "\* (R|OTP\s*)[1-9]+" \
-      | sed 's/.*\* //' | sed 's/ /_/'  
+  curl "$ERLANG_ORG" \
+     | sed '1,/Available releases/'d \
+     | grep -E "^\s*(R|OTP\s*)[1-9]+" \
+     | sed 's/^\s*//' | sed 's/ /_/'
 }
 
 # TODO: add here some way to discover what's the 
