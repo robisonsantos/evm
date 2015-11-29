@@ -27,6 +27,11 @@ function strip_version() {
 }
 
 function list_available_erl_versions() {
+  # get the download.html page in a txt format
+  # filter for all lines, below the one containing
+  # "Available releases", containing what looks like
+  # a version string. Strip leading whitespace
+  # and transform remaining spaces to underscores.
   wget -q -O - "$ERLANG_ORG" \
      | sed '1,/Available releases/'d \
      | grep -E "^\s*(R|OTP\s*)[1-9]+" \
@@ -49,9 +54,6 @@ function _load() {
 # available erlang versions from erlang.org page
 # @params: none
 function evm_list() {
-  # get the download.html page in a txt format
-  # filter for all lines in the format '* Rnn' and 
-  # remove all spaces in the beginner of the line
   if [[ ! -z "$http_proxy" ]] ## http_proxy is set
   then
     local USER=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)
