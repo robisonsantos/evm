@@ -53,13 +53,6 @@ function _load() {
 # available erlang versions from erlang.org page
 # @params: none
 function evm_list() {
-  if [[ ! -z "$http_proxy" ]] ## http_proxy is set
-  then
-    local USER=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)
-    local PASS=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)
-    local AUTH="-pauth=$USER:$PASS"
-  fi
-
   local ERLANGS="$(list_available_erl_versions)"
   echo Available Erlang versions on $ERLANG_URL
   echo
@@ -77,13 +70,6 @@ function evm_list() {
 # to user
 # @params: erlang_version
 function evm_download() {
-  if [[ ! -z "$http_proxy" ]] ## http_proxy is set
-  then
-    local USER="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)"
-    local PASS="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)"
-    local AUTH="-pauth=$USER:$PASS"
-  fi
-
   local ERLANGS="$(list_available_erl_versions)"
   
   if [[ -z $(echo "$ERLANGS" | grep -E "$1") ]]
@@ -133,13 +119,6 @@ function evm_install() {
   then
     echo "$1 is already cached, don't need to download it"
   else
-    if [[ ! -z "$http_proxy" ]] ## http_proxy is set
-    then
-      local USER="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)"
-      local PASS="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)"
-      local AUTH="-pauth=$USER:$PASS"
-    fi
-
     local ERLANGS="$(list_available_erl_versions)"
 
     if [[ -z $(echo "$ERLANGS" | grep "$1") ]]
