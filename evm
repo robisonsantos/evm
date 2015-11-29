@@ -27,7 +27,7 @@ function strip_version() {
 }
 
 function list_available_erl_versions() {
-  curl "$ERLANG_ORG" \
+  wget -q -O - "$ERLANG_ORG" \
      | sed '1,/Available releases/'d \
      | grep -E "^\s*(R|OTP\s*)[1-9]+" \
      | sed 's/^\s*//' | sed 's/ /_/'
