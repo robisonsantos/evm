@@ -29,12 +29,9 @@ function list_available_erl_versions() {
   # get the download.html page in a txt format
   # filter for all lines, below the one containing
   # "Available releases", containing what looks like
-  # a version string. Strip leading whitespace
+  # a version string. Trim out whitespace
   # and transform remaining spaces to underscores.
-  wget -q -O - "$ERLANG_ORG" \
-     | sed '1,/Available releases/'d \
-     | grep -E "^\s*(R|OTP\s*)[1-9]+" \
-     | sed 's/^\s*//' | sed 's/ /_/'
+  wget -q -O - "$ERLANG_ORG" | sed '1,/Available releases/'d | grep -E "^\s*(R|OTP\s*R?)[1-9]+" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//;s/ /_/'
 }
 
 # TODO: add here some way to discover what's the 
