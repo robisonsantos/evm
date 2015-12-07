@@ -4,7 +4,6 @@
 # Read the page http://www.erlang.org/download.html and catch
 # all available erlang versions to download
 #
-# Dependencies: lynx
 #  Added support to new versioning of erlang "OTP ..." instead of "R..."
 #
 
@@ -27,9 +26,15 @@ function strip_version() {
 }
 
 function list_available_erl_versions() {
-  lynx -dump -nolist "$ERLANG_ORG" "$AUTH" \
-      | \grep -E "\* (R|OTP\s*)[1-9]+" \
-      | sed 's/.*\* //' | sed 's/ /_/'  
+  # get the download.html page in a txt format
+  # filter for all lines, below the one containing
+  # "Available releases", containing what looks like
+  # a version string. Strip leading whitespace
+  # and transform remaining spaces to underscores.
+  wget -q -O - "$ERLANG_ORG" \
+     | sed '1,/Available releases/'d \
+     | grep -E "^\s*(R|OTP\s*)[1-9]+" \
+     | sed 's/^\s*//' | sed 's/ /_/'
 }
 
 # TODO: add here some way to discover what's the 
@@ -48,16 +53,6 @@ function _load() {
 # available erlang versions from erlang.org page
 # @params: none
 function evm_list() {
-  # get the download.html page in a txt format
-  # filter for all lines in the format '* Rnn' and 
-  # remove all spaces in the beginner of the line
-  if [[ ! -z "$http_proxy" ]] ## http_proxy is set
-  then
-    local USER=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)
-    local PASS=$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)
-    local AUTH="-pauth=$USER:$PASS"
-  fi
-
   local ERLANGS="$(list_available_erl_versions)"
   echo Available Erlang versions on $ERLANG_URL
   echo
@@ -75,13 +70,6 @@ function evm_list() {
 # to user
 # @params: erlang_version
 function evm_download() {
-  if [[ ! -z "$http_proxy" ]] ## http_proxy is set
-  then
-    local USER="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)"
-    local PASS="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)"
-    local AUTH="-pauth=$USER:$PASS"
-  fi
-
   local ERLANGS="$(list_available_erl_versions)"
   
   if [[ -z $(echo "$ERLANGS" | grep -E "$1") ]]
@@ -131,13 +119,6 @@ function evm_install() {
   then
     echo "$1 is already cached, don't need to download it"
   else
-    if [[ ! -z "$http_proxy" ]] ## http_proxy is set
-    then
-      local USER="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 1)"
-      local PASS="$(echo "$http_proxy" | sed 's|http://||' | cut -d @ -f 1 | cut -d : -f 2)"
-      local AUTH="-pauth=$USER:$PASS"
-    fi
-
     local ERLANGS="$(list_available_erl_versions)"
 
     if [[ -z $(echo "$ERLANGS" | grep "$1") ]]
