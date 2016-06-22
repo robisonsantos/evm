@@ -7,7 +7,7 @@
 #  Added support to new versioning of erlang "OTP ..." instead of "R..."
 #
 
-VERSION="4.0.1"
+VERSION="4.0.2"
 ERLANG_ORG="http://www.erlang.org/download.html"
 ERLANG_URL="http://www.erlang.org"
 FILE_PATH="/download/otp_src_"
@@ -17,12 +17,9 @@ EVM_HOME=$HOME"/.evm"
 DEFAULT_TAR_LOCATION=$EVM_HOME"/erlang_tars/"
 DEFAULT_INSTALL_LOCATION=$EVM_HOME"/erlang_versions/"
 
+# Removes 'OTP_' from the parameter
 function strip_version() {
-  if [[ $1 == OTP_* ]]; then
-    echo $1 | sed 's/OTP_//'
-  else
-    echo $1
-  fi
+  sed 's/OTP_//' <<< $1
 }
 
 function list_available_erl_versions() {
@@ -255,6 +252,7 @@ function evm_default() {
 
 # This function will show a list of all installed version of
 # in the evm space
+# TODO: the version listed here should map the version in evm list
 function evm_installed() {
   ## Colors
   local LIGHT_GREEN="\e[1;32m"
@@ -284,7 +282,8 @@ function evm_installed() {
   fi
 
   ## TODO: think of a way to sort versions better
-  for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>')
+  ## Use dir to avoid ls adding 'colors' to the output
+  for f in $(dir $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>')
   do
     local ver="${f#$FILE_PREFIX}"
 
@@ -325,7 +324,7 @@ function evm_installed() {
 function evm_cache() {
   echo "Erlang version in cache:"
   echo
-  for f in $(ls $DEFAULT_TAR_LOCATION)
+  for f in $(dir $DEFAULT_TAR_LOCATION)
   do
        ff=${f#$FILE_PREFIX}
        echo ${ff%$FILE_EXTENSION}
@@ -339,7 +338,7 @@ function evm_help() {
 
     local available_versions="$(ls -l ${DEFAULT_INSTALL_LOCATION} \
         | grep '^d' \
-        | awk '{print $9}' \
+        | awk '{print $NF}' \
         | cut -d '_' -f 3 \
         | sed 's/^R/\tR/g' \
         | sort \
@@ -353,7 +352,7 @@ function evm_help() {
     Default Version:
         ${default_version:-"None"}
     Versions Ready To Use:
-${available_versions:-"        None"}
+        ${available_versions:-"None"}
 
     Usage:
         * evm list
