@@ -110,7 +110,7 @@ function evm_system() {
 # then is will "install" that version in the evm space.
 # @params: erlang_version
 #          continue_install
-# TODO: only tries to download if the file is not cached yet
+# TODO: Allow passing extra parameters to configure  
 function evm_install() {
   local VER="$(strip_version $1)"
   local DONT_ASK="$2"
@@ -277,7 +277,7 @@ function evm_installed() {
   local system="$(uname -s)"
 
   # Get the current versin in use from PATH
-  if [ "$system" == "Darwin" ]; then
+  if [[ "$system" == "Darwin" ]]; then
       local version_in_use="$(echo $PATH | egrep -o "$DEFAULT_INSTALL_LOCATION.*?/bin" | egrep -o "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
   else
       local version_in_use="$(echo $PATH | grep -Po "$DEFAULT_INSTALL_LOCATION.*?/bin" | grep -Po "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
@@ -295,8 +295,6 @@ function evm_installed() {
       if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
         ver="${LIGHT_GREEN}$ver${NO_COLOR}"
       fi
-
-
 
       if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
         ver="${LIGHT_CYAN}$ver${NO_COLOR}"
