@@ -246,7 +246,7 @@ function evm_default() {
   local VER="$(strip_version $1)"
   if [[ -d $DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER ]]
   then
-    echo $1 > $EVM_HOME/evm_config/erlang_default
+    echo $1 >| $EVM_HOME/evm_config/erlang_default
     evm_use $1
   else
     echo "$1 is not installed yet. Use 'evm install $1' to install it"
