@@ -86,8 +86,13 @@ If that executes fine, then you'll should have a list of actions you can execute
             Lists available erlang versions which are in the evm space and not necessarily installed.
         * evm download [version]
             Downloads the erlang version.
-        * evm install [version]
+        * evm install [version] [-y] [erlang config options]
             Downloads and installs the specified erlang version.
+            Use -y with you want to skip confirmation after configuration step.
+            If -y is passed as argument the installation will happen even if dependencies are
+            not met. Do not use -y if you want to check dependencies are ok.
+            You can also pass any extra parameters to erlang install. Any extra parameter will be passed
+            as is to './configure' step. E.g evm install OTP_18.3 --with-ssl=/usr/local/ssl
         * evm installed
             Lists erlang versions which are built and are ready to be used.
         * evm use [version]
@@ -99,7 +104,10 @@ If that executes fine, then you'll should have a list of actions you can execute
         * evm uninstall [version]
             Uninstalls erlang but keeps the erlang version within the evm.
         * evm system
-            Alters the PATH within the shell to use the non-evm erlang
+            Alters the PATH within the shell to use the non-evm erlang.
+        * evm version
+            Print the currrent version of evm
+
 
 
 ## Dependencies
