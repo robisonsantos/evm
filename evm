@@ -73,10 +73,12 @@ function evm_download() {
   if [[ -z $(echo "$ERLANGS" | grep -E "$1") ]]
   then
     echo "$1 - This version is not available at $ERLANG_ORG"
+    return 1
   else
     if [[ -f "$DEFAULT_TAR_LOCATION$FILE_PREFIX$1$FILE_EXTENSION" ]]
     then
       echo "$1 - is already present at $DEFAULT_TAR_LOCATION"
+      return 1
     else
       mkdir -p $DEFAULT_TAR_LOCATION
       local VER="$(strip_version $1)"
@@ -212,6 +214,7 @@ function evm_uninstall() {
     echo "Uninstalled"
   else
     echo "$1 not installed"
+    return 1
   fi
 }
 
@@ -234,6 +237,7 @@ function evm_use() {
     export PATH=$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER/bin:$PATH
   else
     echo "$1 - Version not installed. Use 'evm install $1' to install it"
+    return 1
   fi
 }
 
@@ -247,6 +251,7 @@ function evm_default() {
     evm_use $1
   else
     echo "$1 is not installed yet. Use 'evm install $1' to install it"
+    return 1
   fi
 }
 
