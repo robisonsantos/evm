@@ -7,7 +7,7 @@
 #  Added support to new versioning of erlang "OTP ..." instead of "R..."
 #
 
-VERSION="4.0.2"
+VERSION="4.0.3"
 ERLANG_ORG="http://www.erlang.org/download.html"
 ERLANG_URL="http://www.erlang.org"
 FILE_PATH="/download/otp_src_"
@@ -288,35 +288,38 @@ function evm_installed() {
   fi
 
   ## TODO: think of a way to sort versions better
-  ## Use dir to avoid ls adding 'colors' to the output
-  for f in $(dir $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>')
-  do
-    local ver="${f#$FILE_PREFIX}"
-
-    # Apply symbols and colors
-    if [[ "$ver" == "$default_version" && "$ver" == "$version_in_use" ]]; then
-      ver="=* $ver"
-
-      if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
-        ver="${LIGHT_GREEN}$ver${NO_COLOR}"
+  ## Unalias 'ls' to avoid it adding 'colors' to the output
+  ## Do that inside a subshell to not alter the user settings 
+  (
+    unalias ls
+    for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>')
+    do
+      local ver="${f#$FILE_PREFIX}"
+  
+      # Apply symbols and colors
+      if [[ "$ver" == "$default_version" && "$ver" == "$version_in_use" ]]; then
+        ver="=* $ver"
+  
+        if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
+          ver="${LIGHT_GREEN}$ver${NO_COLOR}"
+        fi
+  
+        if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
+          ver="${LIGHT_CYAN}$ver${NO_COLOR}"
+        fi
+  
+      elif [[ "$ver" == "$version_in_use" ]]; then
+        ver="=> $ver"
+  
+        if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
+          ver="${LIGHT_GREEN}$ver${NO_COLOR}"
+        fi
+  
       fi
-
-      if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
-        ver="${LIGHT_CYAN}$ver${NO_COLOR}"
-      fi
-
-    elif [[ "$ver" == "$version_in_use" ]]; then
-      ver="=> $ver"
-
-      if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
-        ver="${LIGHT_GREEN}$ver${NO_COLOR}"
-      fi
-
-    fi
-
-    echo -e "$ver"
-  done
-
+  
+      echo -e "$ver"
+    done
+  )
   echo
   echo "------"
   echo "=* : current and default"
@@ -330,11 +333,17 @@ function evm_installed() {
 function evm_cache() {
   echo "Erlang version in cache:"
   echo
-  for f in $(dir $DEFAULT_TAR_LOCATION)
-  do
-       ff=${f#$FILE_PREFIX}
-       echo ${ff%$FILE_EXTENSION}
-  done
+  ## Unalias 'ls' to avoid it adding 'colors' to the output
+  ## Do that inside a subshell to not alter the user settings 
+
+  (
+    unalias ls
+    for f in $(ls $DEFAULT_TAR_LOCATION)
+    do
+         ff=${f#$FILE_PREFIX}
+         echo ${ff%$FILE_EXTENSION}
+    done
+  )
   echo
 }
 
