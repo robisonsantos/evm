@@ -39,7 +39,7 @@ function _load() {
   then
     default="$(cat "$EVM_HOME/evm_config/erlang_default")"
     local VER="$(strip_version $default)"
-    export PATH="$PATH:$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER/bin"
+    export PATH="$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER/bin:$PATH"
   fi
 }
 
