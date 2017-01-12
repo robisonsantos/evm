@@ -67,4 +67,4 @@ echo "
          \/      \/      \/      \//_____/       \/       
 "
 echo 
-echo "Execute 'source $HOME/.evm/scripts/evm' or add that to your ~/.bashrc file"
+echo "Execute 'source $HOME/.evm/scripts/evm' or add that to your ~/.bashrc or ~/.zshrc file"
