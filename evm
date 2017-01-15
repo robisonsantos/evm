@@ -7,7 +7,7 @@
 #  Added support to new versioning of erlang "OTP ..." instead of "R..."
 #
 
-VERSION="4.0.3"
+VERSION="4.0.4"
 ERLANG_ORG="http://www.erlang.org/download.html"
 ERLANG_URL="http://www.erlang.org"
 FILE_PATH="/download/otp_src_"
@@ -109,11 +109,11 @@ function evm_system() {
 # then is will "install" that version in the evm space.
 # @params: erlang_version
 #          continue_install
-# TODO: Allow passing extra parameters to configure  
 function evm_install() {
   local VER="$(strip_version $1)"
   local DONT_ASK="$2"
-  local EXTRA=${@:3}
+  local BUILD_DOCS="$3"
+  local EXTRA=${@:4}
   
   # Download version only if it does not existed cached
   if [[ -f "$DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION" ]]
@@ -155,7 +155,7 @@ function evm_install() {
     # Block execution so the user can check if any dependency is missing
     # before continue with installation unless '-y' is passed along
     # with evm install command
-    if [[ "$DONT_ASK" != "-Y" && "$DONT_ASK" != "-y" ]]; then
+    if [[ "$DONT_ASK" != "Y" && "$DONT_ASK" != "y" ]]; then
       echo
       echo "Continue with installation?(y/n)"
       read cont
@@ -163,7 +163,7 @@ function evm_install() {
       cont="y"
     fi
 
-    if [[ $cont != "Y" && $cont != "y" ]]
+    if [[ "$cont" != "Y" && "$cont" != "y" ]]
     then
       echo "Cancelling installation of $1"
       cd ..
@@ -172,7 +172,14 @@ function evm_install() {
     fi
 
     echo "Compiling and installing $1"
+    export MAKEFLAGS=-j8
     make && make install 1> "/tmp/erlang_$VER_installation" 2>&1
+
+    if [[ "$BUILD_DOCS" == "Y" || "$BUILD_DOCS" == "y" ]]
+    then
+      make docs && make install-docs 1> "/tmp/erlang_$VER_installation" 2>&1
+    fi
+
     rm -rf $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER
     cd -
     echo "Done!"
@@ -376,11 +383,12 @@ function evm_help() {
             Lists available erlang versions which are in the evm space and not necessarily installed.
         * evm download [version]
             Downloads the erlang version.
-        * evm install [version] [-y] [erlang config options]
+        * evm install [version] [-y] [--with-docs] [erlang config options]
             Downloads and installs the specified erlang version.
             Use -y with you want to skip confirmation after configuration step.
             If -y is passed as argument the installation will happen even if dependencies are
             not met. Do not use -y if you want to check dependencies are ok.
+            You can pass --with-docs to build and install documentation for erlang modules.
             You can also pass any extra parameters to erlang install. Any extra parameter will be passed
             as is to './configure' step. E.g evm install OTP_18.3 --with-ssl=/usr/local/ssl
         * evm installed
@@ -418,18 +426,30 @@ function evm() {
     ;;
 
     install)
-      shift; version=$1
+      shift; version=$1; silence="n"; build_docs="n"; extras="" 
       shift
-      case $1 in
-        -y|-Y)
+      while [[ $# -gt 0 ]];
+      do
+        case $1 in
+          --with-docs)
+            build_docs="y"
             shift
-            evm_install $version -y $@
-        ;;
+          ;;
 
-        *)
-            evm_install $version -n $@
-        ;;
-      esac
+          -y|-Y)
+              silence="y"
+              shift
+          ;;
+
+          *)
+              echo "ARG: $1"
+              extras="$extras $1"
+              shift
+              #evm_install $version -n $@
+          ;;
+        esac
+      done
+      evm_install $version $silence $build_docs $extras
     ;;
 
     remove)
