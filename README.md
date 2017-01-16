@@ -33,7 +33,7 @@ If that executes fine, then you'll should have a list of actions you can execute
 - *list* (`$ evm list`)
     This will fetch all the available erlang tarball versions from <http://www.erlang.org/download.html> presenting you a list of them.
 
-- *install* (`$ evm install <version>` [-y] [--with-docs] [<other configure options>])
+- *install* (`$ evm install <version> [-y] [--with-docs] [<other configure options>]`)
     This will download the erlang tarball identified by *version* ( if not yet downloaded ) and then it will simply execute **./configure - make - make install** passing some default values.
 
     It will also give you a chance to download any erlang dependency you need, by stopping the process after the **./configure** command has finished.
