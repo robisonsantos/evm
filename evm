@@ -273,8 +273,11 @@ function evm_installed() {
   local NO_COLOR="\e[0m"
   local COLOR_SUPPORT="FALSE"
 
+  # See if terminal supports colors...
+  local tcolors=$(tput colors)
+
   # Just set a flag in case color is support by this shell
-  if tput colors >> /dev/null 2>&1; then
+  if test -n "$tcolors" && test $tcolors -ge 8 ; then
     COLOR_SUPPORT="TRUE"
   fi
 
