@@ -7,7 +7,7 @@
 #  Added support to new versioning of erlang "OTP ..." instead of "R..."
 #
 
-VERSION="4.0.5"
+VERSION="4.0.6"
 ERLANG_ORG="http://www.erlang.org/download.html"
 ERLANG_URL="http://www.erlang.org"
 FILE_PATH="/download/otp_src_"
@@ -429,6 +429,12 @@ function evm() {
     ;;
 
     install)
+      if [[ $# -le 1 ]]; then 
+          echo "!!! Must inform a version !!!"
+          evm_help
+          return 253
+      fi
+       
       shift; version=$1; silence="n"; build_docs="n"; extras="" 
       shift
       while [[ $# -gt 0 ]];
