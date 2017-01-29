@@ -7,7 +7,7 @@
 #  Added support to new versioning of erlang "OTP ..." instead of "R..."
 #
 
-VERSION="4.0.4"
+VERSION="4.0.5"
 ERLANG_ORG="http://www.erlang.org/download.html"
 ERLANG_URL="http://www.erlang.org"
 FILE_PATH="/download/otp_src_"
@@ -298,7 +298,7 @@ function evm_installed() {
   ## Unalias 'ls' to avoid it adding 'colors' to the output
   ## Do that inside a subshell to not alter the user settings 
   (
-    unalias ls
+    unalias ls >> /dev/null 2>&1
     for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>')
     do
       local ver="${f#$FILE_PREFIX}"
@@ -340,11 +340,11 @@ function evm_installed() {
 function evm_cache() {
   echo "Erlang version in cache:"
   echo
+
   ## Unalias 'ls' to avoid it adding 'colors' to the output
   ## Do that inside a subshell to not alter the user settings 
-
   (
-    unalias ls
+    unalias ls >> /dev/null 2>&1
     for f in $(ls $DEFAULT_TAR_LOCATION)
     do
          ff=${f#$FILE_PREFIX}
