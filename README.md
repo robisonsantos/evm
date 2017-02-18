@@ -41,7 +41,7 @@ evm will allow you to install multiple versions of erlang on your system and eas
     
     If you are sure you have all dependencies installed, and you don't want to be asked about continuing with the installation, use the option **-y** *after* the erlang version. This will make the script continue with the installation without asking you anything.
 
-   If you want to install documentation along with erlang, pass in the option **--with-docs**. You can later access documentation using `$ erl -man mnesia` for example.
+   If you want to install documentation along with erlang, specify the option **--with-docs**. You can later access documentation using `$ erl -man mnesia` for example.
 - **installed** (`$ evm installed`)
     This will show all the installed erlang versions on your system.
 
