@@ -56,7 +56,6 @@ evm will allow you to install multiple versions of erlang on your system and eas
 
 - **cache** (`$ evm cache`)
     This will list all erlang versions that have been either downloaded or installed by evm.
-currently cached on your system.
 
 - **system** (`$ evm system`)
     If you have erlang installed outside evm, this will change the path to use that version instead.
