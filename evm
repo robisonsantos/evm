@@ -384,8 +384,8 @@ function evm_help() {
             Lists the available erlang versions which can be downloaded and 
 	    installed.
         * evm cache
-            Lists the available erlang versions which are in the evm space 
-	    but not necessarily installed.
+            Lists all the erlang versions in the evm space but not necessarily 
+	    installed.
         * evm download [version]
             Downloads the erlang version.
         * evm install [version] [-y] [--with-docs] [erlang config options]
