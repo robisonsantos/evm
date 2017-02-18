@@ -47,7 +47,7 @@ If that executes fine, then you should see a list of evm commands:
     If the specified version is available, this will download it from <http://www.erlang.org/download.html>, then evm will store it for future installation.
 
 - **remove** (`$ evm remove <version>`)
-    If the specified version has been cached on your system, this will remove it.  If the specified version has been installed, this will also uninstall it.
+    If the specified version has been cached on your system, this will remove it.  If it has been installed, this will also uninstall it.
 
 - **uninstall** (`$ evm uninstall <version>`)
     If the specified version has been installed on your system, this will uninstall it.
