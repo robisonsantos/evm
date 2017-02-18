@@ -44,13 +44,13 @@ If that executes fine, then you should see a list of evm commands:
     This will show all the installed erlang versions on your system.
 
 - **download** (`$ evm download <version>`)
-    If the specified version is available, this will download it from <http://www.erlang.org/download.html>, then evm will store it for future installation.
+    If the specified erlang version is available, this will download it from <http://www.erlang.org/download.html>, then evm will store it for future installation.
 
 - **remove** (`$ evm remove <version>`)
-    If the specified version has been cached on your system, this will remove it.  If the specified version has been installed, this will also uninstall it.
+    If the specified erlang version has been cached on your system, this will remove it.  If it has been installed, this will also uninstall it.
 
 - **uninstall** (`$ evm uninstall <version>`)
-    If the specified version has been installed on your system, this will uninstall it.
+    If the specified erlang version has been installed on your system, this will uninstall it.
 
 - **cache** (`$ evm cache`)
     This will list all erlang versions currently cached on your system.
@@ -59,7 +59,7 @@ If that executes fine, then you should see a list of evm commands:
     If you have erlang installed outside evm, this will change the path to use that version instead.
 
 - **use** (`$ evm use <version>`)
-    This will change the path of your current shell to use the specified erlang version--if it's already installed.
+    This will change the path of your current shell to use the specified erlang version--if it's installed.
 
 - **version** (`$ evm version`)
     This will show the current version of evm running on your machine.
