@@ -26,48 +26,46 @@ After installing evm, you can check if everything is okay by executing:
 
     $ evm help
 
-If that executes fine, then you should see a list of commands that you can execute:
+If that executes fine, then you should see a list of evm commands:
 
-- *list* (`$ evm list`)
+- **list** (`$ evm list`)
     This will fetch all the available erlang versions from <http://www.erlang.org/download.html> and display their names.
-- *install* (`$ evm install <version> [-y] [--with-docs] [<other configure options>]`)
-    This will download the erlang tarball identified by *version* ( if not yet downloaded ), and then evm will simply execute **./configure - make - make install** passing some default values.
+- **install** (`$ evm install <version> [-y] [--with-docs] [<other configure options>]`)
+    This will download the erlang tarball identified by *version* ( if not yet downloaded ), and then evm will simply execute **./configure**, **make**, and **make install** passing some default values.
 
     You also will be given a chance to download any erlang dependencies you need--install will halt after the **./configure** command has finished.
 
     **Note:**: EVM *will not* download the erlang dependencies for you.
     
-    If you are sure you have all dependencies installed, and you don't want to be asked about continuing with the installation, use the option -y AFTER the erlang version. This will make the script continue with the installation without asking you anything.
+    If you are sure you have all dependencies installed, and you don't want to be asked about continuing with the installation, use the option **-y** *after* the erlang version. This will make the script continue with the installation without asking you anything.
 
-   If you want to install documentation along with erlang, pass in the option --with-docs. You can later access documentation using `$ erl -man mnesia` for example.
-- *installed* (`$ evm installed`)
+   If you want to install documentation along with erlang, pass in the option **--with-docs**. You can later access documentation using `$ erl -man mnesia` for example.
+- **installed** (`$ evm installed`)
     This will show all the installed erlang versions on your system.
 
-- *download* (`$ evm download <version>`)
+- **download** (`$ evm download <version>`)
     If the specified version is available, this will download it from <http://www.erlang.org/download.html>, then evm will store it for future installation.
 
-- *remove* (`$ evm remove <version>`)
+- **remove** (`$ evm remove <version>`)
     If the specified version has been cached on your system, this will remove it.  If the specified version has been installed, this will also uninstall it.
 
-- *uninstall* (`$ evm uninstall <version>`)
+- **uninstall** (`$ evm uninstall <version>`)
     If the specified version has been installed on your system, this will uninstall it.
 
-- *cache* (`$ evm cache`)
+- **cache** (`$ evm cache`)
     This will list all erlang versions currently cached on your system.
 
-- *system* (`$ evm system`)
+- **system** (`$ evm system`)
     If you have erlang installed outside evm, this will change the path to use that version instead.
 
-- *use* (`$ evm use <version>`)
+- **use** (`$ evm use <version>`)
     This will change the path of your current shell to use the specified erlang version--if it's already installed.
 
-- *version* (`$ evm version`)
+- **version** (`$ evm version`)
     This will show the current version of evm running on your machine.
 
-- *help* (`$ evm help`)
+- **help** (`$ evm help`)
     This will show something similar to below (thanks to neowulf33):
-
-## EVM help
 
     EVM Home: 
         /home/robison/.evm
