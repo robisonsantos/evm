@@ -58,10 +58,10 @@ evm will allow you to install multiple versions of erlang on your system and eas
     This will list all erlang versions that have been either downloaded or installed by evm.
 
 - **system** (`$ evm system`)
-    If you have erlang installed outside evm, this will change the path to use that version instead.
+    If you have an erlang version installed outside evm, this will change the PATH to use that version.
 
 - **use** (`$ evm use <version>`)
-    This will change the path of your current shell to use the specified erlang version--if it's already installed.
+    This will change the PATH to use the specified erlang version--if it's installed.
 
 - **version** (`$ evm version`)
     This will show the current version of evm running on your machine.
