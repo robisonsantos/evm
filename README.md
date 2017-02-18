@@ -70,43 +70,46 @@ evm will allow you to install multiple versions of erlang on your system and eas
     This will show something similar to below (thanks to neowulf33):
 
 ```
-    EVM Home: 
-        /home/robison/.evm
+    EVM Home:
+        ${EVM_HOME}
     Default Version:
-        R15B01
-    Versions Ready To Use: 
-        R16B
-        R15B01
+        ${default_version:-"None"}
+    Versions Ready To Use:
+        ${available_versions:-"None"}
 
     Usage:
         * evm list
-            Lists available erlang versions which can be downloaded and installed on the system.
+            Lists the available erlang versions which can be downloaded and 
+	    installed.
         * evm cache
-            Lists available erlang versions which are in the evm space and not necessarily installed.
+            Lists the available erlang versions which are in the evm space 
+	    but not necessarily installed.
         * evm download [version]
             Downloads the erlang version.
         * evm install [version] [-y] [--with-docs] [erlang config options]
             Downloads and installs the specified erlang version.
-            Use -y with you want to skip confirmation after configuration step.
-            If -y is passed as argument the installation will happen even if dependencies are
-            not met. Do not use -y if you want to check dependencies are ok.
-            If you pass --with-docs, evm will compile and install erlang documentation, so you can use "erl -man <module>"               to check module documentation in the console. 
-            You can also pass any extra parameters to erlang install. Any extra parameter will be passed
-            as is to './configure' step. E.g evm install OTP_18.3 --with-ssl=/usr/local/ssl
+            Use -y when you want to skip confirmation after the ./configure step.
+	    -y will perform the installation even if dependencies are not met.  
+	    Do not use -y if you want to stop and check the dependencies.  
+	    You can use --with-docs to build and install documentation for 
+	    erlang modules. You can also pass extra options to erlang install.
+	    Extra options will be passed as is to the ./configure step, e.g.:
+	        evm install OTP_18.3 --with-ssl=/usr/local/ssl
         * evm installed
             Lists erlang versions which are built and are ready to be used.
         * evm use [version]
-            Begins to use the specified erlang version.
+            Switches to the specified erlang version.
         * evm default [version]
-            Makes the specified erlang version as the default erlang version.
+            Makes the specified erlang version the default.
         * evm remove [version]
-            Removes the erlang version completely from the evm space.
+            Removes the specified erlang version completely from the evm space.
         * evm uninstall [version]
-            Uninstalls erlang but keeps the erlang version within the evm.
+            Uninstalls the specified erlang version but keeps it within the 
+	    evm space.
         * evm system
-            Alters the PATH within the shell to use the non-evm erlang.
+            Alters the PATH in the current shell to use the non-evm erlang.
         * evm version
-            Print the currrent version of evm
+            Prints the current version of evm.
 ```
 
 
