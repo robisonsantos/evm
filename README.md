@@ -46,13 +46,13 @@ evm will allow you to install multiple versions of erlang on your system and eas
     This will show all the installed erlang versions on your system.
 
 - **download** (`$ evm download <version>`)
-    If the specified version is available, this will download it from <http://www.erlang.org/download.html>, then evm will store it for future installation.
+    If the specified erlang version is available, this will download it from <http://www.erlang.org/download.html>, then evm will store it for future installation.
 
 - **remove** (`$ evm remove <version>`)
-    If the specified version has been cached on your system, this will remove it.  If it has been installed, this will also uninstall it.
+    If the specified erlang version has been cached on your system, this will remove it.  If it has been installed, this will also uninstall it.
 
 - **uninstall** (`$ evm uninstall <version>`)
-    If the specified version has been installed on your system, this will uninstall it.
+    If the specified erlang version has been installed on your system, this will uninstall it.
 
 - **cache** (`$ evm cache`)
     This will list all erlang versions currently cached on your system.
