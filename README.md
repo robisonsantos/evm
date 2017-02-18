@@ -1,74 +1,71 @@
 # EVM - Erlang Version Manager
 
-This is a simple script which aims to make easy the management of different Erlang versions in your system.
-
+This is a simple script which aims to make it easy to manage different Erlang versions installed on your system.
 ## Installation
 
 Simply execute:
 
     $ ./install
 
-And then add the following line to your .bashrc file:
+Then add the following line to your .bashrc file:
 
     source $HOME/.evm/scripts/evm
 
-This will create some directories inside your $HOME/.evm dir:
+That will create some directories inside your $HOME/.evm dir:
 
 - **erlang_tars** : the place where all erlang tarballs downloaded by evm will be cached.
 - **erlang_versions** : where the erlang enviroment will be installed.
-- **scripts** : the location of evm script itself.
-- **evm_config** : contains a single file pointing the current _default_ erlang version in use.
+- **scripts** : the location of the evm script itself.
+- **evm_config** : contains a single file pointing to the current _default_ erlang version in use.
 
 ## Usage
 
-**EVM** is based on **RVM** (<https://rvm.io>), but of course without that so many features.
-It will help you to have as many erlang versions you like in your system, switching between them as easy as possible.
-
-After the installation, you can check if everything is ok by executing:
+**evm** is like **rvm** (<https://rvm.io>), but with fewer features.
+evm will allow you to install multiple versions of erlang on your system and easily switch between them.
+After installing evm, you can check if everything is okay by executing:
 
     $ evm help
 
-If that executes fine, then you'll should have a list of actions you can execute:
+If that executes fine, then you should see a list of commands that you can execute:
 
 - *list* (`$ evm list`)
-    This will fetch all the available erlang tarball versions from <http://www.erlang.org/download.html> presenting you a list of them.
-
+    This will fetch all the available erlang versions from <http://www.erlang.org/download.html> and display their names.
 - *install* (`$ evm install <version> [-y] [--with-docs] [<other configure options>]`)
-    This will download the erlang tarball identified by *version* ( if not yet downloaded ) and then it will simply execute **./configure - make - make install** passing some default values.
+    This will download the erlang tarball identified by *version* ( if not yet downloaded ), and then evm will simply execute **./configure - make - make install** passing some default values.
 
-    It will also give you a chance to download any erlang dependency you need, by stopping the process after the **./configure** command has finished.
+    You also will be given a chance to download any erlang dependencies you need--install will halt after the **./configure** command has finished.
 
-    **Obs:**: EVM *will not* download the erlang dependencies for you.
+    **Note:**: EVM *will not* download the erlang dependencies for you.
     
-    If you are sure you have all dependencies installed and don't want to be asked about continuing with the installation, use the option -y AFTER the erlang_version. This will make the script continue with installation without asking anything to you.
+    If you are sure you have all dependencies installed, and you don't want to be asked about continuing with the installation, use the option -y AFTER the erlang version. This will make the script continue with the installation without asking you anything.
 
    If you want to install documentation along with erlang, pass in the option --with-docs. You can later access documentation using `$ erl -man mnesia` for example.
 - *installed* (`$ evm installed`)
     This will show all the installed erlang versions on your system.
 
 - *download* (`$ evm download <version>`)
-    If the version informed is available, this command will download it from <http://www.erlang.org/download.html> and then it will store it for future installation.
+    If the specified version is available, this will download it from <http://www.erlang.org/download.html>, then evm will store it for future installation.
 
 - *remove* (`$ evm remove <version>`)
-    If the version informed has been chached on your system, this option will remove it. Note that if the informed version is installed, the command will also uninstalled it.
+    If the specified version has been cached on your system, this will remove it.  If the specified version has been installed, this will also uninstall it.
 
 - *uninstall* (`$ evm uninstall <version>`)
-    If the version informed has been installed on your system, this option will simply uninstall it.
+    If the specified version has been installed on your system, this will uninstall it.
 
 - *cache* (`$ evm cache`)
-    This will list of erlang versions currently cached on your system.
+    This will list all erlang versions currently cached on your system.
 
 - *system* (`$ evm system`)
-    If you have erlang installed outside EVM, then this command will change the path to include that version instead.
+    If you have erlang installed outside evm, this will change the path to use that version instead.
 
 - *use* (`$ evm use <version>`)
-    This will change the path of your current shell to use the specified erlang version, if it's already installed.
+    This will change the path of your current shell to use the specified erlang version--if it's already installed.
 
 - *version* (`$ evm version`)
-    This will show the current version of this script running on your machine.
+    This will show the current version of evm running on your machine.
 
 - *help* (`$ evm help`)
-    This will show something similar as bellow (thanks to neowulf33):
+    This will show something similar to below (thanks to neowulf33):
 
 ## EVM help
 
@@ -114,13 +111,13 @@ If that executes fine, then you'll should have a list of actions you can execute
 
 ## Dependencies
 
-This script is dependent on :
+This script is dependent on:
 
 - *wget*
 
 ## Erlang dependencies
 
-On Debian based system, this is the list of dependencies you probably need:
+On Debian based systems, this is the list of dependencies you probably need:
 
    sudo apt-get install openssl libssl-dev fop xsltproc unixodbc-dev libxml2-utils libwxbase2.8 libwxgtk2.8-dev libqt4-opengl-dev
 
@@ -131,3 +128,4 @@ On Debian based system, this is the list of dependencies you probably need:
 3. Commit your changes (`git commit -am 'Added some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
