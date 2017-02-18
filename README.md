@@ -18,15 +18,17 @@ That will create some directories inside your $HOME/.evm dir:
 - **scripts** : the location of the evm script itself.
 - **evm_config** : contains a single file pointing to the current _default_ erlang version in use.
 
-## Usage
-
-**evm** is like **rvm** (<https://rvm.io>), but with fewer features.
-evm will allow you to install multiple versions of erlang on your system and easily switch between them.
 After installing evm, you can check if everything is okay by executing:
 
     $ evm help
 
-If that executes fine, then you should see a list of evm commands:
+If you see a list of evm commands, then your installation succeded.
+
+## Usage
+
+**evm** is like **rvm** (<https://rvm.io>), but with fewer features.
+evm will allow you to install multiple versions of erlang on your system and easily switch between them.
+
 
 - **list** (`$ evm list`)
     This will fetch all the available erlang versions from <http://www.erlang.org/download.html> and display their names.
