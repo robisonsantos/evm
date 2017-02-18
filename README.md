@@ -22,7 +22,7 @@ After installing evm, you can check if everything is okay by executing:
 
     $ evm help
 
-If you see a list of evm commands, then your installation succeded.
+If you see a list of evm commands, then your installation succeeded.
 
 ## Usage
 
