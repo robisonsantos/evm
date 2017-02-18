@@ -67,6 +67,8 @@ If that executes fine, then you should see a list of evm commands:
 - **help** (`$ evm help`)
     This will show something similar to below (thanks to neowulf33):
 
+## EVM help
+
     EVM Home: 
         /home/robison/.evm
     Default Version:
