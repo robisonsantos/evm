@@ -3,7 +3,7 @@
 This is a simple script which aims to simplify the management of different Erlang versions installed on your system.
 ## Installation
 
-Simply execute:
+Download evm, unzip it, and in the top level directory simply execute:
 
     $ ./install
 
