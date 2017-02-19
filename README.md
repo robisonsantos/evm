@@ -1,6 +1,6 @@
 # evm - Erlang Version Manager
 
-This is a simple script which aims to make it easy to manage different Erlang versions installed on your system.
+This is a simple script which aims to simplify the management of different Erlang versions installed on your system.
 ## Installation
 
 Simply execute:
