@@ -1,9 +1,10 @@
 # evm - Erlang Version Manager
 
-This is a simple script which aims to simplify the management of different Erlang versions installed on your system.
+This is a simple script which aims to simplify the management of different Erlang versions installed on your system. **evm** will allow you to install multiple versions of erlang on your system and easily switch between them. **evm** is like **rvm** (<https://rvm.io>) but with fewer features.
+
 ## Installation
 
-Download evm, unzip it, and in the top level directory simply execute:
+Download **evm**, unzip it, and in the top level directory simply execute:
 
     $ ./install
 
@@ -18,17 +19,13 @@ That will create some directories inside your $HOME/.evm dir:
 - **scripts** : the location of the evm script itself.
 - **evm_config** : contains a single file pointing to the current _default_ erlang version in use.
 
-After installing evm, you can check if everything is okay by executing:
+After installing **evm**, you can check if everything is okay by executing:
 
     $ evm help
 
-If you see a list of evm commands, then your installation succeeded.
+If you see a list of **evm** commands, then your installation succeeded.
 
 ## Usage
-
-**evm** is like **rvm** (<https://rvm.io>), but with fewer features.
-evm will allow you to install multiple versions of erlang on your system and easily switch between them.
-
 
 - **list** (`$ evm list`)
     This will fetch all the available erlang versions from <http://www.erlang.org/download.html> and display their names.
@@ -40,7 +37,7 @@ evm will allow you to install multiple versions of erlang on your system and eas
     Note: EVM *will not* download the erlang dependencies for you.
     
     If you are sure you have all dependencies installed, and you don't want to be asked about continuing with the installation, specify the option **-y** *after* the erlang version. This will make the script continue with the installation without asking you anything.
-
+    
    If you want to install documentation along with erlang, specify the option **--with-docs**. You can later access documentation using `$ erl -man mnesia` for example.
 - **installed** (`$ evm installed`)
     This will show all the installed erlang versions on your system.
@@ -132,4 +129,3 @@ On Debian based systems, this is the list of dependencies you probably need:
 3. Commit your changes (`git commit -am 'Added some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
-
