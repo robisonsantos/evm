@@ -78,21 +78,21 @@ If you see a list of **evm** commands, then your installation succeeded.
     Usage:
         * evm list
             Lists the available erlang versions which can be downloaded and 
-	    installed.
+	    	installed.
         * evm cache
             Lists the available erlang versions which are in the evm space 
-	    but not necessarily installed.
+	    	but not necessarily installed.
         * evm download [version]
             Downloads the erlang version.
         * evm install [version] [-y] [--with-docs] [erlang config options]
-            Downloads and installs the specified erlang version.
-            Use -y when you want to skip confirmation after the ./configure step.
-	    -y will perform the installation even if dependencies are not met.  
-	    Do not use -y if you want to stop and check the dependencies.  
-	    You can use --with-docs to build and install documentation for 
-	    erlang modules. You can also pass extra options to erlang install.
-	    Extra options will be passed as is to the ./configure step, e.g.:
-	        evm install OTP_18.3 --with-ssl=/usr/local/ssl
+	        Downloads and installs the specified erlang version.
+	     	Use -y when you want to skip confirmation after the ./configure step.
+	     	-y will perform the installation even if dependencies are not met.
+	    	Do not use -y if you want to stop and check the dependencies.  
+	    	You can use --with-docs to build and install documentation for
+	    	erlang modules. You can also pass extra options to erlang install.
+	    	Extra options will be passed as is to the ./configure step, e.g.:
+					evm install OTP_18.3 --with-ssl=/usr/local/ssl
         * evm installed
             Lists erlang versions which are built and are ready to be used.
         * evm use [version]
@@ -103,7 +103,7 @@ If you see a list of **evm** commands, then your installation succeeded.
             Removes the specified erlang version completely from the evm space.
         * evm uninstall [version]
             Uninstalls the specified erlang version but keeps it within the 
-	    evm space.
+	    	evm space.
         * evm system
             Alters the PATH in the current shell to use the non-evm erlang.
         * evm version
