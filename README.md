@@ -28,7 +28,8 @@ If you see a list of **evm** commands, then your installation succeeded.
 ## Usage
 
 - **list** (`$ evm list`)
-    This will fetch all the available erlang versions from <http://www.erlang.org/download.html> and display their names.
+    This will display the names of all the available erlang versions from <http://www.erlang.org/download.html>
+
 - **install** (`$ evm install <version> [-y] [--with-docs] [<other configure options>]`)
     This will download the erlang tarball identified by **\<version\>** ( if not yet downloaded ), then evm will install erlang by simply executing ./configure, make, make install, passing some default values.  The downloaded erlang tarball will be stored in a cache.
 
