@@ -41,7 +41,7 @@ If you see a list of **evm** commands, then your installation succeeded.
     
    If you want to install documentation along with erlang, specify the option **--with-docs**. You can later access documentation using `$ erl -man mnesia` for example.
 - **installed** (`$ evm installed`)
-    This will show all the erlang versions installed by evm on your system.
+    This will show all erlang versions installed by evm on your system.
 
 - **download** (`$ evm download <version>`)
     This will download the specified erlang version from <http://www.erlang.org/download.html>, then evm will store it in a cache for future installation.
@@ -50,7 +50,7 @@ If you see a list of **evm** commands, then your installation succeeded.
     This will remove the specified erlang version from the cache; and if the specified erlang version was also installed, this will uninstall it.
 
 - **uninstall** (`$ evm uninstall <version>`)
-    This will uninstall the specified erlang version--however it will remaine in the cache, and evm won't need to download it again to install it.
+    This will uninstall the specified erlang version--however it will remain in the cache, and evm won't need to download it again to install it.
 
 - **cache** (`$ evm cache`)
     This will list all the erlang versions that have been downloaded by evm, but not necessarily installed.
