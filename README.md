@@ -14,10 +14,10 @@ Then add the following line to your .bashrc file:
 
 That will create some directories inside your $HOME/.evm dir:
 
-- **erlang_tars** : the place where all erlang tarballs downloaded by evm will be cached.
+- **erlang_tars** : the place where all the erlang tarballs downloaded by evm will be cached.
 - **erlang_versions** : where the erlang enviroment will be installed.
 - **scripts** : the location of the evm script itself.
-- **evm_config** : contains a single file pointing to the current _default_ erlang version in use.
+- **evm_config** : contains a single file pointing to the _default_ erlang version.
 
 After installing **evm**, you can check if everything is okay by executing:
 
@@ -31,7 +31,7 @@ If you see a list of **evm** commands, then your installation succeeded.
     This will display the names of all the available erlang versions from <http://www.erlang.org/download.html>
 
 - **install** (`$ evm install <version> [-y] [--with-docs] [<other configure options>]`)
-    This will download the erlang tarball identified by **\<version\>** ( if not already downloaded ), then evm will install erlang by simply executing ./configure, make, make install, passing some default values.  The downloaded erlang tarball will be stored in a cache.
+    This will download the erlang tarball identified by **\<version\>** ( if not already downloaded ), then evm will install erlang by simply executing ./configure, make, make install, passing some default values.  The downloaded erlang tarball will be stored in a cache directory.
 
     You also will be given a chance to download any erlang dependencies you need--install will halt after the ./configure command has finished.
 
@@ -44,16 +44,16 @@ If you see a list of **evm** commands, then your installation succeeded.
     This will show all erlang versions installed by evm on your system.
 
 - **download** (`$ evm download <version>`)
-    This will download the specified erlang version from <http://www.erlang.org/download.html>, then evm will store it in a cache for future installation.
+    This will download the specified erlang version from <http://www.erlang.org/download.html>, then evm will store it in a cache directory for future installation.
 
 - **remove** (`$ evm remove <version>`)
-    This will remove the specified erlang version from the cache; and if the specified erlang version was also installed, this will uninstall it.
+    This will remove the specified erlang version from the cache; and if the specified erlang version is installed, this will uninstall it.
 
 - **uninstall** (`$ evm uninstall <version>`)
-    This will uninstall the specified erlang version--however it will remain in the cache, and evm won't need to download it again to install it.
+    This will uninstall the specified erlang version--however the erlang tarball will remain in the cache directory, and evm won't need to download the erlang tarball again to install it.
 
 - **cache** (`$ evm cache`)
-    This will list all the erlang versions that have been downloaded by evm, but not necessarily installed.
+    This will list all erlang versions that have been downloaded by evm (not necessarily installed).
 
 - **system** (`$ evm system`)
     If you have an erlang version installed outside evm, this will change the PATH to use that version.
