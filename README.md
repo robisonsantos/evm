@@ -35,7 +35,7 @@ If you see a list of **evm** commands, then your installation succeeded.
 
     You also will be given a chance to download any erlang dependencies you need--install will halt after the ./configure command has finished.
 
-    Note: evm *will not* download the erlang dependencies for you.
+    Note: **evm** *will not* download the erlang dependencies for you.
     
     If you are sure you have all dependencies installed, and you don't want to be asked about continuing with the installation, specify the option **-y** *after* the erlang version. This will make the script continue with the installation without asking you anything.
     
