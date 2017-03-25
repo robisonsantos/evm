@@ -53,7 +53,7 @@ If you see a list of **evm** commands, then your installation succeeded.
     This will uninstall the specified erlang version--however the erlang tarball will remain in the cache directory, and evm won't need to download the erlang tarball again to install it.
 
 - **cache** (`$ evm cache`)
-    This will list all erlang versions that have been downloaded by evm (not necessarily installed).
+    This will list all the erlang versions that have been downloaded by evm (not necessarily installed).
 
 - **system** (`$ evm system`)
     If you have an erlang version installed outside evm, this will change the PATH to use that version.
