@@ -4,8 +4,6 @@
 # Read the page http://www.erlang.org/download.html and catch
 # all available erlang versions to download
 #
-#  Added support to new versioning of erlang "OTP ..." instead of "R..."
-#
 
 VERSION="4.0.6"
 ERLANG_ORG="http://www.erlang.org/download.html"
@@ -114,7 +112,7 @@ function evm_install() {
   local DONT_ASK="$2"
   local BUILD_DOCS="$3"
   local EXTRA=${@:4}
-  
+
   # Download version only if it does not existed cached
   if [[ -f "$DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION" ]]
   then
@@ -270,6 +268,7 @@ function evm_installed() {
   ## Colors
   local LIGHT_GREEN="\e[1;32m"
   local LIGHT_CYAN="\e[1;36m"
+  local DARK_YELLOW="\e[1;33m"
   local NO_COLOR="\e[0m"
   local COLOR_SUPPORT="FALSE"
 
@@ -299,34 +298,40 @@ function evm_installed() {
 
   ## TODO: think of a way to sort versions better
   ## Unalias 'ls' to avoid it adding 'colors' to the output
-  ## Do that inside a subshell to not alter the user settings 
+  ## Do that inside a subshell to not alter the user settings
   (
     unalias ls >> /dev/null 2>&1
     for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>')
     do
       local ver="${f#$FILE_PREFIX}"
-  
+
       # Apply symbols and colors
       if [[ "$ver" == "$default_version" && "$ver" == "$version_in_use" ]]; then
         ver="=* $ver"
-  
+
+        # Show default and current as 'green'
         if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
           ver="${LIGHT_GREEN}$ver${NO_COLOR}"
         fi
-  
+
+      elif [[ "$ver" == "$default_version" ]]; then
+        ver="* $ver"
+
+        # Show default (but not current) as 'yellow'
         if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
-          ver="${LIGHT_CYAN}$ver${NO_COLOR}"
+          ver="${DARK_YELLOW}$ver${NO_COLOR}"
         fi
-  
+
       elif [[ "$ver" == "$version_in_use" ]]; then
         ver="=> $ver"
-  
+
+        # Show current (but not default) as cyan
         if [[ "$COLOR_SUPPORT" == "TRUE" ]]; then
           ver="${LIGHT_GREEN}$ver${NO_COLOR}"
         fi
-  
+
       fi
-  
+
       echo -e "$ver"
     done
   )
@@ -345,7 +350,7 @@ function evm_cache() {
   echo
 
   ## Unalias 'ls' to avoid it adding 'colors' to the output
-  ## Do that inside a subshell to not alter the user settings 
+  ## Do that inside a subshell to not alter the user settings
   (
     unalias ls >> /dev/null 2>&1
     for f in $(ls $DEFAULT_TAR_LOCATION)
@@ -381,19 +386,19 @@ function evm_help() {
 
     Usage:
         * evm list
-            Lists the available erlang versions which can be downloaded and 
+            Lists the available erlang versions which can be downloaded and
 	    installed.
         * evm cache
-            Lists all the erlang versions in the evm space but not necessarily 
+            Lists all the erlang versions in the evm space but not necessarily
 	    installed.
         * evm download [version]
             Downloads the erlang version.
         * evm install [version] [-y] [--with-docs] [erlang config options]
             Downloads and installs the specified erlang version.
             Use -y when you want to skip confirmation after the ./configure step.
-	    -y will perform the installation even if dependencies are not met.  
-	    Do not use -y if you want to stop and check the dependencies.  
-	    You can use --with-docs to build and install documentation for 
+	    -y will perform the installation even if dependencies are not met.
+	    Do not use -y if you want to stop and check the dependencies.
+	    You can use --with-docs to build and install documentation for
 	    erlang modules. You can also pass extra options to erlang install.
 	    Extra options will be passed as is to the ./configure step, e.g.:
 	        evm install OTP_18.3 --with-ssl=/usr/local/ssl
@@ -406,7 +411,7 @@ function evm_help() {
         * evm remove [version]
             Removes the specified erlang version completely from the evm space.
         * evm uninstall [version]
-            Uninstalls the specified erlang version but keeps it within the 
+            Uninstalls the specified erlang version but keeps it within the
 	    evm space.
         * evm system
             Alters the PATH in the current shell to use the non-evm erlang.
@@ -433,13 +438,13 @@ function evm() {
     ;;
 
     install)
-      if [[ $# -le 1 ]]; then 
+      if [[ $# -le 1 ]]; then
           echo "!!! Must inform a version !!!"
           evm_help
           return 253
       fi
-       
-      shift; version=$1; silence="n"; build_docs="n"; extras="" 
+
+      shift; version=$1; silence="n"; build_docs="n"; extras=""
       shift
       while [[ $# -gt 0 ]];
       do
