@@ -148,7 +148,11 @@ function evm_install() {
 
     echo "Configuring..."
     cd $UNTAR_DIR
-    ./configure --prefix $DEFAULT_INSTALL_LOCATION/$FILE_PREFIX$VER $EXTRA
+
+    # Sanitize extra parameters. Extra spaces break configure
+    # Multiple spaces becomes one space and spaces from begining of string are removed.
+    EXTRA="$(echo "$EXTRA" | sed -E 's/[[:blank:]]+/ /g;s/^[[:blank:]]+//g')"
+    ./configure --prefix="$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER" "$EXTRA"
 
     # Block execution so the user can check if any dependency is missing
     # before continue with installation unless '-y' is passed along
