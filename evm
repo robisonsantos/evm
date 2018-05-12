@@ -5,7 +5,7 @@
 # all available erlang versions to download
 #
 
-VERSION="4.0.6"
+VERSION="4.0.7"
 ERLANG_ORG="http://www.erlang.org/download.html"
 ERLANG_URL="http://www.erlang.org"
 FILE_PATH="/download/otp_src_"
@@ -152,7 +152,7 @@ function evm_install() {
     # Sanitize extra parameters. Extra spaces break configure
     # Multiple spaces becomes one space and spaces from begining of string are removed.
     EXTRA="$(echo "$EXTRA" | sed -E 's/[[:blank:]]+/ /g;s/^[[:blank:]]+//g')"
-    ./configure --prefix="$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER" "$EXTRA"
+    ./configure --prefix="$DEFAULT_INSTALL_LOCATION$FILE_PREFIX$VER" $EXTRA
 
     # Block execution so the user can check if any dependency is missing
     # before continue with installation unless '-y' is passed along
@@ -464,7 +464,6 @@ function evm() {
           ;;
 
           *)
-              echo "ARG: $1"
               extras="$extras $1"
               shift
               #evm_install $version -n $@
