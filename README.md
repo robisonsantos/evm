@@ -30,7 +30,7 @@ If you see a list of **evm** commands, then your installation succeeded.
 - **list** (`$ evm list`)
     This will display the names of all the available erlang versions from <http://www.erlang.org/download.html>
 
-- **install** (`$ evm install <version> [-y] [--with-docs] [<other configure options>]`)
+- **install** (`$ evm install <version> [-y] [--expand-bin] [--with-docs] [<other configure options>]`)
     This will download the erlang tarball identified by **\<version\>** ( if not already downloaded ), then evm will install erlang by simply executing ./configure, make, make install, passing some default values.  The downloaded erlang tarball will be stored in a cache directory.
 
     You also will be given a chance to download any erlang dependencies you need--install will halt after the ./configure command has finished.
@@ -40,6 +40,7 @@ If you see a list of **evm** commands, then your installation succeeded.
     If you are sure you have all dependencies installed, and you don't want to be asked about continuing with the installation, specify the option **-y** *after* the erlang version. This will make the script continue with the installation without asking you anything.
     
    If you want to install documentation along with erlang, specify the option **--with-docs**. You can later access documentation using `$ erl -man mnesia` for example.
+   If you want to install other excutables from standard libraries, like **odbc**, specify the option **--expand-bin**. This will create links to files in ani **bin** folder found insise **$HOME/.evm/erlang_versions/<version>/lib** and make them available in the ** $PATH**.
 - **installed** (`$ evm installed`)
     This will show all the erlang versions installed by evm on your system.
 
