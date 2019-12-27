@@ -105,22 +105,22 @@ function evm_system() {
 }
 
 function _unzip-strip() {
-    # shopt is a bash built-in command. Zsh, has setopt instead
-    # so, set the command according to the type of shell (only supports bash and zsh)
-    local SHOPT="shopt"
-    if [[ "$SHELL" == *zsh ]]; then 
-        SHOPT="setopt" 
-    fi
+  # shopt is a bash built-in command. Zsh, has setopt instead
+  # so, set the command according to the type of shell (only supports bash and zsh)
+  local SHOPT="shopt"
+  if [[ "$SHELL" == *zsh ]]; then
+    SHOPT="setopt"
+  fi
 
-    local zip="$1"
-    local dest="${2:-.}"
-    local temp=$(mktemp -d) && unzip -d "$temp" "$zip" && mkdir -p "$dest" && $SHOPT -s dotglob && local f=("$temp"/*) &&
+  local zip="$1"
+  local dest="${2:-.}"
+  local temp=$(mktemp -d) && unzip -d "$temp" "$zip" && mkdir -p "$dest" && $SHOPT -s dotglob && local f=("$temp"/*) &&
     if (( ${#f[@]} == 1 )) && [[ -d "${f[0]}" ]] ; then
-        mv "$temp"/*/* "$dest"
+      mv "$temp"/*/* "$dest"
     else
-        mv "$temp"/* "$dest"
+      mv "$temp"/* "$dest"
     fi && rm -rf "$temp"
-}
+  }
 
 
 # This function will download the erlang version if needed,
@@ -168,7 +168,7 @@ function evm_install() {
     # tar xvzf ~/.evm/erlang_tars/otp_src_R15B03-1.tar.gz --strip-components 1 -C otp_src_R15B03-1
     local UNTAR_DIR=$DEFAULT_TAR_LOCATION$FOLDER_PREFIX$VER
     mkdir $UNTAR_DIR
-    _unzip-strip $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION $UNTAR_DIR 
+    _unzip-strip $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION $UNTAR_DIR
 
     echo "Configuring... $UNTAR_DIR"
 
@@ -176,12 +176,12 @@ function evm_install() {
     # are expanded inside a new directory in the destination,
     # so we need to check whether there's one single entry in the destination
     # or multiple and cd into the right place
-    if [ $(ls -1 $UNTAR_DIR | wc -l) -gt 1 ]; then 
+    if [ $(ls -1 $UNTAR_DIR | wc -l) -gt 1 ]; then
       cd $UNTAR_DIR
     else
-      cd $UNTAR_DIR/* # CD into the new subdirectory 
+      cd $UNTAR_DIR/* # CD into the new subdirectory
     fi
-    
+
     local INSTALL_DIR="$DEFAULT_INSTALL_LOCATION$FOLDER_PREFIX$VER"
     # Sanitize extra parameters. Extra spaces break configure
     # Multiple spaces becomes one space and spaces from begining of string are removed.
@@ -232,11 +232,11 @@ function evm_install() {
       # Escape "erlang/bin" and "erlang/erts" because that's already in the right place
       for d in $(find . -type d -name "bin" | grep -v "erlang/bin" | grep -v "erlang/erts"); do
         (
-          cd $d
-          for f in *; do
-            echo "Adding $d/$f to $INSTALL_DIR/bin..."
-            ln -s "$INSTALL_DIR/lib/$d/$f" "$INSTALL_DIR/bin"
-          done
+        cd $d
+        for f in *; do
+          echo "Adding $d/$f to $INSTALL_DIR/bin..."
+          ln -s "$INSTALL_DIR/lib/$d/$f" "$INSTALL_DIR/bin"
+        done
         )
       done
 
@@ -348,25 +348,25 @@ function evm_installed() {
 
   # Get the default version
   local default_version="$(cat $EVM_HOME/evm_config/erlang_default)"
-        default_version="$(strip_version $default_version)"
+  default_version="$(strip_version $default_version)"
 
   local system="$(uname -s)"
 
   # Get the current versin in use from PATH
   if [[ "$system" == "Darwin" ]]; then
-      local version_in_use="$(echo $PATH | egrep -o "$DEFAULT_INSTALL_LOCATION.*?/bin" | egrep -o "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
+    local version_in_use="$(echo $PATH | egrep -o "$DEFAULT_INSTALL_LOCATION.*?/bin" | egrep -o "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
   else
-      local version_in_use="$(echo $PATH | grep -Po "$DEFAULT_INSTALL_LOCATION.*?/bin" | grep -Po "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
+    local version_in_use="$(echo $PATH | grep -Po "$DEFAULT_INSTALL_LOCATION.*?/bin" | grep -Po "$FILE_PREFIX.*?/" | tr -d '/' | sed "s/$FILE_PREFIX//" | head -1)"
   fi
 
   ## TODO: think of a way to sort versions better
   ## Unalias 'ls' to avoid it adding 'colors' to the output
   ## Do that inside a subshell to not alter the user settings
   (
-    unalias ls >> /dev/null 2>&1
-    for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>' | sed 's/otp_src_//g')
-    do
-      local ver="${f#$FILE_PREFIX}"
+  unalias ls >> /dev/null 2>&1
+  for f in $(ls $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>' | sed 's/otp_src_//g')
+  do
+    local ver="${f#$FILE_PREFIX}"
 
       # Apply symbols and colors
       if [[ "$ver" == "$default_version" && "$ver" == "$version_in_use" ]]; then
@@ -397,15 +397,15 @@ function evm_installed() {
 
       echo -e "$ver"
     done
-  )
-  echo
-  echo "------"
-  echo "=* : current and default"
-  echo "=> : current"
-  echo " * : default"
+    )
+    echo
+    echo "------"
+    echo "=* : current and default"
+    echo "=> : current"
+    echo " * : default"
 
-  echo
-}
+    echo
+  }
 
 # This function will show all erlang version cached on evm space
 function evm_cache() {
@@ -415,30 +415,30 @@ function evm_cache() {
   ## Unalias 'ls' to avoid it adding 'colors' to the output
   ## Do that inside a subshell to not alter the user settings
   (
-    unalias ls >> /dev/null 2>&1
-    for f in $(ls $DEFAULT_TAR_LOCATION | grep -v $FOLDER_PREFIX)
-    do
-         ff=${f#$FILE_PREFIX}
-         echo ${ff%$FILE_EXTENSION}
-    done
+  unalias ls >> /dev/null 2>&1
+  for f in $(ls $DEFAULT_TAR_LOCATION | grep -v $FOLDER_PREFIX)
+  do
+    ff=${f#$FILE_PREFIX}
+    echo ${ff%$FILE_EXTENSION}
+  done
   )
   echo
 }
 
 function evm_help() {
 
-    local default_version="$(cat $EVM_HOME/evm_config/erlang_default)"
+  local default_version="$(cat $EVM_HOME/evm_config/erlang_default)"
 
-    local available_versions="$(ls -l ${DEFAULT_INSTALL_LOCATION} \
-        | grep '^d' \
-        | awk '{print $NF}' \
-        | cut -d '_' -f 3 \
-        | sed 's/^R/\tR/g' \
-        | sort \
-        | perl -e 'print reverse <>')"
+  local available_versions="$(ls -l ${DEFAULT_INSTALL_LOCATION} \
+    | grep '^d' \
+    | awk '{print $NF}' \
+    | cut -d '_' -f 3 \
+    | sed 's/^R/\tR/g' \
+    | sort \
+    | perl -e 'print reverse <>')"
 
-    local HELP_FILE=$EVM_HOME"/.evm_helptext"
-    cat > $HELP_FILE <<_EOF
+  local HELP_FILE=$EVM_HOME"/.evm_helptext"
+  cat > $HELP_FILE <<_EOF
 
     EVM Home:
         ${EVM_HOME}
@@ -450,24 +450,24 @@ function evm_help() {
     Usage:
         * evm list
             Lists the available erlang versions which can be downloaded and
-	    installed.
+      installed.
         * evm cache
             Lists all the erlang versions in the evm space but not necessarily
-	    installed.
+      installed.
         * evm download [version]
             Downloads the erlang version.
         * evm install [version] [-y] [--with-docs] [--expand-bin] [erlang config options]
             Downloads and installs the specified erlang version.
             Use -y when you want to skip confirmation after the ./configure step.
-	    -y will perform the installation even if dependencies are not met.
-	    Do not use -y if you want to stop and check the dependencies.
-	    You can use --with-docs to build and install documentation for
-	    erlang modules. You can also pass extra options to erlang install.
-	    You can use --expand-bin to create links to any binary found in the
-	    "<HOME>/.evm/erlang_version/<version>/lib" directory and make them available
-	    in the <PATH>.
-	    Extra options will be passed as is to the ./configure step, e.g.:
-	        evm install 18.3 --with-ssl=/usr/local/ssl --with-docs --expand-bin
+      -y will perform the installation even if dependencies are not met.
+    Do not use -y if you want to stop and check the dependencies.
+      You can use --with-docs to build and install documentation for
+      erlang modules. You can also pass extra options to erlang install.
+      You can use --expand-bin to create links to any binary found in the
+      "<HOME>/.evm/erlang_version/<version>/lib" directory and make them available
+      in the <PATH>.
+      Extra options will be passed as is to the ./configure step, e.g.:
+          evm install 18.3 --with-ssl=/usr/local/ssl --with-docs --expand-bin
         * evm installed
             Lists erlang versions which are built and are ready to be used.
         * evm use [version]
@@ -478,15 +478,15 @@ function evm_help() {
             Removes the specified erlang version completely from the evm space.
         * evm uninstall [version]
             Uninstalls the specified erlang version but keeps it within the
-	    evm space.
+      evm space.
         * evm system
             Alters the PATH in the current shell to use the non-evm erlang.
         * evm version
             Prints the current version of evm.
 _EOF
 
-    cat $HELP_FILE
-    rm -f $HELP_FILE
+cat $HELP_FILE
+rm -f $HELP_FILE
 }
 
 # This is supposed to be the main function of this file
@@ -497,17 +497,17 @@ function evm() {
   case $1 in
     list)
       evm_list
-    ;;
+      ;;
 
     download)
       evm_download $2
-    ;;
+      ;;
 
     install)
       if [[ $# -le 1 ]]; then
-          echo "!!! Must inform a version !!!"
-          evm_help
-          return 253
+        echo "!!! Must inform a version !!!"
+        evm_help
+        return 253
       fi
 
       shift; version=$1; silence="n"; build_docs="n"; expand_bin="n"; extras=""
@@ -518,65 +518,65 @@ function evm() {
           --with-docs)
             build_docs="y"
             shift
-          ;;
+            ;;
 
           --expand-bin)
             expand_bin="y"
             shift
-          ;;
+            ;;
 
           -y|-Y)
-              silence="y"
-              shift
-          ;;
+            silence="y"
+            shift
+            ;;
 
           *)
-              extras="$extras $1"
-              shift
-          ;;
+            extras="$extras $1"
+            shift
+            ;;
         esac
       done
       evm_install $version $silence $build_docs $expand_bin $extras
-    ;;
+      ;;
 
     remove)
       evm_remove $2
-    ;;
+      ;;
 
     uninstall)
       evm_uninstall $2
-    ;;
+      ;;
 
     system)
       evm_system
-    ;;
+      ;;
 
     use)
       evm_use $2
-    ;;
+      ;;
 
     default)
       evm_default $2
-    ;;
+      ;;
 
     installed)
       evm_installed
-    ;;
+      ;;
 
     cache)
       evm_cache
-    ;;
+      ;;
 
     version)
       echo $VERSION
-    ;;
+      ;;
 
     *)
       evm_help
-    ;;
+      ;;
 
-  esac
-}
+    esac
+  }
 
 ## Load default version
 _load
