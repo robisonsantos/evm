@@ -4,7 +4,13 @@ This is a simple script which aims to simplify the management of different Erlan
 
 ## Installation
 
-Download **evm**, unzip it, and in the top level directory simply execute:
+Run
+
+`curl -sSL https://raw.githubusercontent.com/robisonsantos/evm/master/install | bash`
+
+or
+
+Download **evm**, unzip it, and on the top level directory simply execute:
 
     $ ./install
 
