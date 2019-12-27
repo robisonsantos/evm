@@ -33,7 +33,7 @@ If you see a list of **evm** commands, then your installation succeeded.
 - **install** (`$ evm install <version> [-y] [--expand-bin] [--with-docs] [<other configure options>]`)
     This will download the erlang tarball identified by **\<version\>** ( if not already downloaded ), then evm will install erlang by simply executing ./configure, make, make install, passing some default values.  The downloaded erlang tarball will be stored in a cache directory.
 
-    You also will be given a chance to download any erlang dependencies you need--install will halt after the ./configure command has finished.
+    You also will be given a chance to download any erlang dependencies you need `--install` will halt after the `./configure` command has finished.
 
     Note: **evm** *will not* download the erlang dependencies for you.
     
@@ -93,7 +93,7 @@ If you see a list of **evm** commands, then your installation succeeded.
 	    You can use --with-docs to build and install documentation for
 	    erlang modules. You can also pass extra options to erlang install.
 	    Extra options will be passed as is to the ./configure step, e.g.:
-		   evm install OTP_18.3 --with-ssl=/usr/local/ssl
+		   evm install 18.3 --with-ssl=/usr/local/ssl
         * evm installed
             Lists erlang versions which are built and are ready to be used.
         * evm use [version]
@@ -122,7 +122,7 @@ This script is dependent on:
 
 On Debian based systems, this is the list of dependencies you probably need:
 
-   sudo apt-get install openssl libssl-dev fop xsltproc unixodbc-dev libxml2-utils libwxbase2.8 libwxgtk2.8-dev libqt4-opengl-dev
+   `sudo apt-get install openssl libssl-dev fop xsltproc unixodbc-dev libxml2-utils libwxbase3.0-0v5 libwxbase3.0-dev libqt4-opengl-dev libncurses-dev`
 
 ## Contributing
 
