@@ -27,7 +27,7 @@ function _list_available_erl_versions() {
   # "Available releases", containing what looks like
   # a version string. Trim out whitespace
   # and transform remaining spaces to underscores.
-  wget -q -O - "$ERLANG_ORG" | grep -ioP '(?<=HREF="OTP-)([0-9\.]+|R[-0-9-A-Z])(?=.README|.readme)' | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//;s/ /_/'
+  wget -q -O - "$ERLANG_ORG" | grep -ioP '(?<=HREF="OTP-)([0-9\.]+|R[-0-9-A-Z])(?=.README|.readme)' | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//;s/ /_/' | sort
 }
 
 # TODO: add here some way to discover what's the
@@ -187,7 +187,7 @@ function evm_install() {
     # Multiple spaces becomes one space and spaces from begining of string are removed.
     EXTRA="$(echo "$EXTRA" | sed -E 's/[[:blank:]]+/ /g;s/^[[:blank:]]+//g')"
     chmod +X otp_build
-    ./otp_build setup
+    ./otp_build autoconf # To generate the configure file
     ./configure --prefix="$INSTALL_DIR" $EXTRA
 
     # Block execution so the user can check if any dependency is missing
