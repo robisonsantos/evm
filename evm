@@ -5,7 +5,7 @@
 # all available erlang versions to download, including minor releases
 #
 
-VERSION="5.0.0"
+VERSION="5.0.1"
 ERLANG_ORG="http://www.erlang.org/download/"
 ERLANG_URL="https://github.com"
 FILE_PATH="/erlang/otp/archive/OTP-"
@@ -23,11 +23,19 @@ function strip_version() {
 
 function _list_available_erl_versions() {
   # get the download.html page in a txt format
-  # filter for all lines, below the one containing
-  # "Available releases", containing what looks like
-  # a version string. Trim out whitespace
-  # and transform remaining spaces to underscores.
-  wget -q -O - "$ERLANG_ORG" | grep -ioP '(?<=HREF="OTP-)([0-9\.]+|R[-0-9-A-Z])(?=.README|.readme)' | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//;s/ /_/' | sort
+  # filter those with opt-.*readme on it, the grap only the version
+  # remove spaces
+  # NOTE: this logic exclude old version of erlang that used to start with R*, which means
+  # that version before 17 won't be displayed. This should be ok as those versions are already
+  # too old
+  # This also removes the 'grep' dependency, which becomes a problem on Mac
+  wget -q -O - "$ERLANG_ORG"                              \
+   | tr '[:upper:]' '[:lower:]' \
+   | sed '/^.*href="otp-\(.*\).readme".*/!d' \
+   | sed -e 's/^.*href="otp-\(.*\).readme".*/\1/g' \
+   | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//;s/ /_/'
+   | sort
+   | uniq
 }
 
 # TODO: add here some way to discover what's the
