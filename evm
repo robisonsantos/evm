@@ -29,12 +29,12 @@ function _list_available_erl_versions() {
   # that version before 17 won't be displayed. This should be ok as those versions are already
   # too old
   # This also removes the 'grep' dependency, which becomes a problem on Mac
-  wget -q -O - "$ERLANG_ORG"                              \
+  wget -q -O - "$ERLANG_ORG" \
    | tr '[:upper:]' '[:lower:]' \
    | sed '/^.*href="otp-\(.*\).readme".*/!d' \
    | sed -e 's/^.*href="otp-\(.*\).readme".*/\1/g' \
-   | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//;s/ /_/'
-   | sort
+   | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//;s/ /_/' \
+   | sort \
    | uniq
 }
 
