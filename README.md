@@ -122,7 +122,7 @@ This script is dependent on:
 
 On Debian based systems, this is the list of dependencies you probably need:
 
-   `sudo apt-get install openssl libssl-dev fop xsltproc unixodbc-dev libxml2-utils libwxbase3.0-0v5 libwxbase3.0-dev libqt4-opengl-dev libncurses-dev`
+   `sudo apt-get install openssl libssl-dev fop xsltproc unixodbc-dev libxml2-utils libwxbase3.0-0v5 libwxbase3.0-dev libqt5opengl5-dev libncurses-dev libwxgtk3-3.0-gtk3-dev libwxgtk3-3.0-gtk3-0v5 wx-common `
 
 ## Contributing
 
