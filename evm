@@ -626,4 +626,13 @@ function _evm_complete() {
   return 0
 }
 
-complete -F _evm_complete evm
+if [ -n "$(command -v complete)" ]; then
+{
+  complete -F _evm_complete evm
+}
+fi
+if [ -n "$(command -v compdef)" ]; then
+{
+  compdef _evm_complete evm
+}
+fi
