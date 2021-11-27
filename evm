@@ -626,13 +626,9 @@ function _evm_complete() {
   return 0
 }
 
-if [ -n "$(command -v complete)" ]; then
-{
+# Setup auto complete giving priority to complete command and falling back to compdef if it exists 
+if command -v complete >/dev/null; then
   complete -F _evm_complete evm
-}
-fi
-if [ -n "$(command -v compdef)" ]; then
-{
+elif command -v compdef >/dev/null; then
   compdef _evm_complete evm
-}
 fi
