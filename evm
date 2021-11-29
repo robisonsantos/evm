@@ -626,4 +626,9 @@ function _evm_complete() {
   return 0
 }
 
-complete -F _evm_complete evm
+# Setup auto complete giving priority to complete command and falling back to compdef if it exists 
+if command -v complete >/dev/null; then
+  complete -F _evm_complete evm
+elif command -v compdef >/dev/null; then
+  compdef _evm_complete evm
+fi
