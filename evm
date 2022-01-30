@@ -4,7 +4,8 @@
 # Read the page http://www.erlang.org and catch
 # all available erlang versions to download, including minor releases
 #
-
+# set -ex
+EVM_PS_SHELL="$(ps | grep $$)"
 VERSION="5.0.1"
 ERLANG_ORG="http://www.erlang.org/download/"
 ERLANG_URL="https://github.com"
@@ -116,7 +117,7 @@ function _unzip-strip() {
   # shopt is a bash built-in command. Zsh, has setopt instead
   # so, set the command according to the type of shell (only supports bash and zsh)
   local SHOPT="shopt"
-  if [[ "$SHELL" == *zsh ]]; then
+  if [[ "$EVM_PS_SHELL" == *zsh ]]; then
     SHOPT="setopt"
   fi
 
@@ -590,40 +591,101 @@ function evm() {
 _load
 
 ## Setup autocomplete
-if [[ "$SHELL" == *zsh ]]; then
+if [[ "$EVM_PS_SHELL" == *zsh ]]; then
   autoload bashcompinit
   bashcompinit
 fi
 
 function _evm_complete() {
+  # How to do autocomplete bash zsh useful reference  REF: https://blog.deepjyoti30.dev/tab-autocomplet-cli-apps
+  local type_list="cache default download help install installed list remove system uninstall use version"
   local cur prev
+  local -i i_comp_cword
+  i_comp_cword=$COMP_CWORD
 
   COMPREPLY=()
-  cur=${COMP_WORDS[COMP_CWORD]}
-  prev=${COMP_WORDS[COMP_CWORD-1]}
+  cur=${COMP_WORDS[i_comp_cword]}
+  prev=${COMP_WORDS[i_comp_cword-1]}
 
-  if [ $COMP_CWORD -eq 1 ]; then
-    COMPREPLY=( $(compgen -W "cache default download help install installed list remove system uninstall use version" -- $cur) )
-  elif [ $COMP_CWORD -eq 2 ]; then
-    case "$prev" in
-      "download"|"install")
-        local __erlangs="$(_list_available_erl_versions)"
-        COMPREPLY=( $(compgen -W "$__erlangs" -- $cur) )
-        ;;
-      "uninstall"|"use"|"default")
-        local __versions="$(ls --color=never $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>' | sed 's/otp_src_//g')"
-        COMPREPLY=( $(compgen -W "$__versions" -- $cur) )
-        ;;
-      "remove")
-        local __versions=$(ls --color=never $DEFAULT_TAR_LOCATION | grep -v $FOLDER_PREFIX | sed "s/$FILE_EXTENSION//g;s/$FILE_PREFIX//g")
-        COMPREPLY=( $(compgen -W "$__versions" -- $cur) )
-        ;;
-      *)
-        ;;
-    esac
+  # DEBUG
+  # DEBUG >&2 echo "ps:;$(ps | grep $$)"
+  # DEBUG >&2 echo "EVM_PS_SHELL:;${EVM_PS_SHELL}"
+  # DEBUG >&2 echo "who:;${0}"
+  # DEBUG >&2 echo "i_com_cword:;${i_comp_cword};"
+
+  if [[ "$EVM_PS_SHELL" == *bash ]] ; then
+    # shellcheck disable=SC2086
+    if [ ${i_comp_cword} -eq 1 ] ; then
+      # DEBUG >&2 echo "bash true 01"
+      # shellcheck disable=SC2207
+      COMPREPLY=( $(compgen -W "${type_list}" -- $cur) )
+    elif [ ${i_comp_cword} -eq 2 ] ; then
+      # DEBUG >&2 echo "bash true 12"
+      case "$prev" in
+        "download"|"install")
+          # shellcheck disable=SC2155
+          local __erlangs="$(_list_available_erl_versions)"
+          # shellcheck disable=SC2207
+          COMPREPLY=( $(compgen -W "$__erlangs" -- $cur) )
+          ;;
+        "uninstall"|"use"|"default")
+          # shellcheck disable=SC2155
+          # shellcheck disable=SC2010
+          # shellcheck disable=SC2012
+          local __versions="$(ls --color=never $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>' | sed 's/otp_src_//g')"
+          # shellcheck disable=SC2207
+          COMPREPLY=( $(compgen -W "$__versions" -- $cur) )
+          ;;
+        "remove")
+          # shellcheck disable=SC2155
+          # shellcheck disable=SC2010
+          # shellcheck disable=SC2012
+          local __versions=$(ls --color=never $DEFAULT_TAR_LOCATION | grep -v $FOLDER_PREFIX | sed "s/$FILE_EXTENSION//g;s/$FILE_PREFIX//g")
+          # shellcheck disable=SC2207
+          COMPREPLY=( $(compgen -W "$__versions" -- $cur) )
+          ;;
+        *)
+          ;;
+      esac
+    fi
+  elif [[ "$EVM_PS_SHELL" == *zsh ]] ; then
+    # shellcheck disable=SC2086
+    if [ ${i_comp_cword} -eq 0 ] ; then
+      # DEBUG >&2 echo "zsh true 01"
+      _arguments "*: :( $(compgen -W "${type_list}" -- ${cur}) )"
+    elif [ ${i_comp_cword} -eq 1 ] ; then
+      # DEBUG >&2 echo "zsh true 12"
+      case "$prev" in
+        "download"|"install")
+          # shellcheck disable=SC2155
+          local __erlangs="$(_list_available_erl_versions)"
+          _arguments "*: :( $(compgen -W "${__erlangs}" -- ${cur}) )"
+          ;;
+        "uninstall"|"use"|"default")
+          # shellcheck disable=SC2155
+          # shellcheck disable=SC2010
+          # shellcheck disable=SC2012
+          local __versions="$(ls --color=never $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>' | sed 's/otp_src_//g')"
+          _arguments "*: :( $(compgen -W "${__versions}" -- ${cur}) )"
+          ;;
+        "remove")
+          # shellcheck disable=SC2155
+          # shellcheck disable=SC2010
+          # shellcheck disable=SC2012
+          local __versions=$(ls --color=never $DEFAULT_TAR_LOCATION | grep -v $FOLDER_PREFIX | sed "s/$FILE_EXTENSION//g;s/$FILE_PREFIX//g")
+          _arguments "*: :( $(compgen -W "${__versions}" -- ${cur}) )"
+          ;;
+        *)
+          ;;
+      esac
+    fi
   fi
-
   return 0
 }
-
-complete -F _evm_complete evm
+if [ -n "$(command -v complete)" ] ; then
+  complete -F _evm_complete evm
+fi
+if [ -n "$(command -v compdef)" ] ; then
+  # compadd -U _evm_complete evm
+  compdef _evm_complete evm
+fi
