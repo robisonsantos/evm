@@ -601,17 +601,31 @@ function _evm_complete() {
   local type_list="cache default download help install installed list remove system uninstall use version"
   local cur prev
   local -i i_comp_cword
-  i_comp_cword=$COMP_CWORD
-
-  COMPREPLY=()
-  cur=${COMP_WORDS[i_comp_cword]}
-  prev=${COMP_WORDS[i_comp_cword-1]}
-
   # DEBUG
+  # DEBUG >&2 echo ""
   # DEBUG >&2 echo "ps:;$(ps | grep $$)"
   # DEBUG >&2 echo "EVM_PS_SHELL:;${EVM_PS_SHELL}"
   # DEBUG >&2 echo "who:;${0}"
+  if [[ "$EVM_PS_SHELL" == *bash ]] ; then
+    # DEBUG >&2 echo "COMP_CWORD:;${COMP_CWORD};"
+    i_comp_cword=$COMP_CWORD
+    COMPREPLY=()
+    # DEBUG >&2 echo "COMP_WORDS:;${COMP_WORDS};"
+    cur=${COMP_WORDS[i_comp_cword]}
+    prev=${COMP_WORDS[i_comp_cword-1]}
+  elif [[ "$EVM_PS_SHELL" == *zsh ]] ; then
+    # DEBUG >&2 echo "CURRENT:;${CURRENT};"
+    # DEBUG >&2 echo "words:;${words};"
+    # DEBUG >&2 echo "curcontext:;${curcontext};"
+    i_comp_cword=$(( CURRENT - 1 ))
+    # shellcheck disable=SC2154
+    cur=${words[i_comp_cword]}
+    prev=${words[i_comp_cword-1]}
+  fi
+
   # DEBUG >&2 echo "i_com_cword:;${i_comp_cword};"
+  # DEBUG >&2 echo "cur:;${cur};"
+  # DEBUG >&2 echo "prev:;${prev};"
 
   if [[ "$EVM_PS_SHELL" == *bash ]] ; then
     # shellcheck disable=SC2086
@@ -636,6 +650,12 @@ function _evm_complete() {
           # shellcheck disable=SC2207
           COMPREPLY=( $(compgen -W "$__versions" -- $cur) )
           ;;
+        "evm")
+          # shellcheck disable=SC2155
+          # shellcheck disable=SC2010
+          # shellcheck disable=SC2012
+          _arguments "*: :( $(compgen -W "${type_list}" -- ${cur}) )"
+          ;;
         "remove")
           # shellcheck disable=SC2155
           # shellcheck disable=SC2010
@@ -650,30 +670,37 @@ function _evm_complete() {
     fi
   elif [[ "$EVM_PS_SHELL" == *zsh ]] ; then
     # shellcheck disable=SC2086
-    if [ ${i_comp_cword} -eq 0 ] ; then
+    if [ ${i_comp_cword} -eq 1 ] ; then
       # DEBUG >&2 echo "zsh true 01"
       _arguments "*: :( $(compgen -W "${type_list}" -- ${cur}) )"
-    elif [ ${i_comp_cword} -eq 1 ] ; then
+    elif [ ${i_comp_cword} -eq 2 ] ; then
       # DEBUG >&2 echo "zsh true 12"
-      case "$prev" in
+      case "$cur" in
         "download"|"install")
           # shellcheck disable=SC2155
           local __erlangs="$(_list_available_erl_versions)"
-          _arguments "*: :( $(compgen -W "${__erlangs}" -- ${cur}) )"
+          # DEBUG  >&2 echo "_list_available_erl_versions:$(head -1<<<_list_available_erl_versions)"
+          _arguments "*: :( $(compgen -W "${__erlangs}" -- ${words}) )"
           ;;
         "uninstall"|"use"|"default")
           # shellcheck disable=SC2155
           # shellcheck disable=SC2010
           # shellcheck disable=SC2012
           local __versions="$(ls --color=never $DEFAULT_INSTALL_LOCATION | sort | perl -e 'print reverse <>' | sed 's/otp_src_//g')"
-          _arguments "*: :( $(compgen -W "${__versions}" -- ${cur}) )"
+          _arguments "*: :( $(compgen -W "${__versions}" -- ${words}) )"
+          ;;
+        "evm")
+          # shellcheck disable=SC2155
+          # shellcheck disable=SC2010
+          # shellcheck disable=SC2012
+          _arguments "*: :( $(compgen -W "${type_list}" -- ${words}) )"
           ;;
         "remove")
           # shellcheck disable=SC2155
           # shellcheck disable=SC2010
           # shellcheck disable=SC2012
           local __versions=$(ls --color=never $DEFAULT_TAR_LOCATION | grep -v $FOLDER_PREFIX | sed "s/$FILE_EXTENSION//g;s/$FILE_PREFIX//g")
-          _arguments "*: :( $(compgen -W "${__versions}" -- ${cur}) )"
+          _arguments "*: :( $(compgen -W "${__versions}" -- ${words}) )"
           ;;
         *)
           ;;
@@ -683,7 +710,7 @@ function _evm_complete() {
   return 0
 }
 
-# Setup auto complete giving priority to complete command and falling back to compdef if it exists 
+# Setup auto complete giving priority to complete command and falling back to compdef if it exists
 if command -v complete >/dev/null; then
   complete -F _evm_complete evm
 elif command -v compdef >/dev/null; then
