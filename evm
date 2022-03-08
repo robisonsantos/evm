@@ -5,7 +5,12 @@
 # all available erlang versions to download, including minor releases
 #
 # set -ex
-EVM_PS_SHELL="$(ps | grep $$)"
+if [[ -z "${SHELL}" ]]; then
+  EVM_PS_SHELL="$(ps | grep $$)"
+else
+  EVM_PS_SHELL="$SHELL"
+fi
+
 VERSION="5.0.1"
 ERLANG_ORG="http://www.erlang.org/download/"
 ERLANG_URL="https://github.com"
