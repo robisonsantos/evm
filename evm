@@ -131,13 +131,21 @@ function _unzip_strip() {
 
   local zip="$1"
   local dest="${2:-.}"
-  local temp=$(mktemp -d) && unzip -d "$temp" "$zip" && mkdir -p "$dest" && $SHOPT -s dotglob && local f=("$temp"/*) &&
-    if (( ${#f[@]} == 1 )) && [[ -d "${f[0]}" ]] ; then
-      mv "$temp"/*/* "$dest"
-    else
-      mv "$temp"/* "$dest"
-    fi && rm -rf "$temp"
-  }
+  local temp=$(mktemp -d) 
+  
+  unzip -d "$temp" "$zip"
+  mkdir -p "$dest" 
+  $SHOPT -s dotglob 
+  local f=("$temp"/*)
+  
+  if (( ${#f[@]} == 1 )) && [[ -d "${f[0]}" ]] ; then
+    mv "$temp"/*/* "$dest"
+  else
+    mv "$temp"/* "$dest"
+  fi 
+  
+  rm -rf "$temp"
+}
 
 
 # This function will download the erlang version if needed,
