@@ -118,7 +118,7 @@ function evm_system() {
   export PATH
 }
 
-function _unzip-strip() {
+function _unzip_strip() {
   # shopt is a bash built-in command. Zsh, has setopt instead
   # so, set the command according to the type of shell (only supports bash and zsh)
   local SHOPT="shopt"
@@ -182,7 +182,7 @@ function evm_install() {
     # tar xvzf ~/.evm/erlang_tars/otp_src_R15B03-1.tar.gz --strip-components 1 -C otp_src_R15B03-1
     local UNTAR_DIR=$DEFAULT_TAR_LOCATION$FOLDER_PREFIX$VER
     mkdir $UNTAR_DIR
-    _unzip-strip $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION $UNTAR_DIR
+    _unzip_strip $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION $UNTAR_DIR
 
     echo "Configuring... $UNTAR_DIR"
 
