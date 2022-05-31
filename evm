@@ -5,13 +5,16 @@
 # all available erlang versions to download, including minor releases
 #
 # set -ex
+
+set -o errexit # Used to exit upon error, avoiding cascading errors
+
 if [[ -z "${SHELL}" ]]; then
   EVM_PS_SHELL="$(ps | grep $$)"
 else
   EVM_PS_SHELL="$SHELL"
 fi
 
-VERSION="5.0.1"
+VERSION="5.0.2"
 ERLANG_ORG="http://www.erlang.org/download/"
 ERLANG_URL="https://github.com"
 FILE_PATH="/erlang/otp/archive/OTP-"
