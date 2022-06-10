@@ -6,8 +6,6 @@
 #
 # set -ex
 
-set -o errexit # Used to exit upon error, avoiding cascading errors
-
 if [[ -z "${SHELL}" ]]; then
   EVM_PS_SHELL="$(ps | grep $$)"
 else
