@@ -1,25 +1,25 @@
 #!/usr/bin/env bash
 
-# This simple script should create the basic environment for 
-# EVM in the user's HOME
+# This simple script should create the basic environment for
+# EVM in the user's HOME if EVM_HOME is not set
 
-EVM_HOME="$HOME/.evm"
+if [[ -z "$EVM_HOME" ]]; then
+  EVM_HOME="$HOME/.evm"
+fi
 DIRS="erlang_tars erlang_versions evm_config scripts"
 
-type wget > /dev/null 2> /dev/null
+type wget >/dev/null 2>/dev/null
 if [[ $? -eq "1" ]]; then
-   echo "Could not complete installation of evm."
-   echo "Please install wget."
-   exit 1
+  echo "Could not complete installation of evm."
+  echo "Please install wget."
+  exit 1
 else
-   echo "wget found!"
+  echo "wget found!"
 fi
 
 # For each dir, check whether it's already exists or not
-for dir in $DIRS
-do
-  if [[ ! -d "$EVM_HOME/$dir" ]]
-  then
+for dir in $DIRS; do
+  if [[ ! -d "$EVM_HOME/$dir" ]]; then
     mkdir -p "$EVM_HOME/$dir"
     echo "$EVM_HOME/$dir successfully created"
   else
@@ -28,8 +28,7 @@ do
 done
 
 # Create the config file
-if [[ ! -f "$EVM_HOME/evm_config/erlang_default" ]]
-then 
+if [[ ! -f "$EVM_HOME/evm_config/erlang_default" ]]; then
   touch "$EVM_HOME/evm_config/erlang_default"
   echo "$EVM_HOME/evm_config/erlang_default succesfully created"
 else
@@ -66,5 +65,5 @@ echo "
  \____|__  /(____  /|___|  /(____  /\___  /  \___  >|__|   
          \/      \/      \/      \//_____/       \/       
 "
-echo 
-echo "Execute 'source $HOME/.evm/scripts/evm' or add that to your ~/.bashrc or ~/.zshrc file"
+echo
+echo "Execute 'source $EVM_HOME/scripts/evm' or add that to your ~/.bashrc or ~/.zshrc file"
