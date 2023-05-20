@@ -40,7 +40,7 @@ If you see a list of **evm** commands, then your installation succeeded.
     If you are sure you have all dependencies installed, and you don't want to be asked about continuing with the installation, specify the option **-y** *after* the erlang version. This will make the script continue with the installation without asking you anything.
     
    If you want to install documentation along with erlang, specify the option **--with-docs**. You can later access documentation using `$ erl -man mnesia` for example.
-   If you want to install other excutables from standard libraries, like **odbc**, specify the option **--expand-bin**. This will create links to files in ani **bin** folder found insise **$HOME/.evm/erlang_versions/<version>/lib** and make them available in the ** $PATH**.
+   If you want to install other excutables from standard libraries, like **odbc**, specify the option **--expand-bin**. This will create links to files in ani **bin** folder found insise **$EVM_HOME/erlang_versions/<version>/lib** and make them available in the ** $PATH**.
 - **installed** (`$ evm installed`)
     This will show all the erlang versions installed by evm on your system.
 

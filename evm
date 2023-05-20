@@ -19,7 +19,9 @@ FILE_PATH="/erlang/otp/archive/OTP-"
 FILE_EXTENSION=".zip"
 FILE_PREFIX="OTP-"
 FOLDER_PREFIX="otp_src_"
-EVM_HOME=$HOME"/.evm"
+if [[ -z "$EVM_HOME" ]]; then
+  EVM_HOME="$HOME/.evm"
+fi
 DEFAULT_TAR_LOCATION=$EVM_HOME"/erlang_tars/"
 DEFAULT_INSTALL_LOCATION=$EVM_HOME"/erlang_versions/"
 
@@ -188,7 +190,7 @@ function evm_install() {
     echo "Inflating $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION"
 
     # Handles the special case where otp_src_R15B03-1.tar.gz gets untarred into otp_src_R15B03
-    # tar xvzf ~/.evm/erlang_tars/otp_src_R15B03-1.tar.gz --strip-components 1 -C otp_src_R15B03-1
+    # tar xvzf $EVM_HOME/erlang_tars/otp_src_R15B03-1.tar.gz --strip-components 1 -C otp_src_R15B03-1
     local UNTAR_DIR=$DEFAULT_TAR_LOCATION$FOLDER_PREFIX$VER
     mkdir $UNTAR_DIR
     _unzip_strip $DEFAULT_TAR_LOCATION$FILE_PREFIX$VER$FILE_EXTENSION $UNTAR_DIR
@@ -487,7 +489,7 @@ function evm_help() {
       You can use --with-docs to build and install documentation for
       erlang modules. You can also pass extra options to erlang install.
       You can use --expand-bin to create links to any binary found in the
-      "<HOME>/.evm/erlang_version/<version>/lib" directory and make them available
+      "$EVM_HOME/erlang_version/<version>/lib" directory and make them available
       in the <PATH>.
       Extra options will be passed as is to the ./configure step, e.g.:
           evm install 18.3 --with-ssl=/usr/local/ssl --with-docs --expand-bin
@@ -589,7 +591,11 @@ function evm() {
     cache)
       evm_cache
       ;;
-
+    
+    global)
+      echo $(cat $EVM_HOME/evm_config/erlang_default)
+      ;;
+      
     version)
       echo $VERSION
       ;;
